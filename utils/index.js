@@ -1,3 +1,4 @@
-import { connectToDB } from "./db.js";
+import { connectToDB } from "./db-util.js";
+import { createNewError } from "./error-util.js";
 
-export { connectToDB };
+export { connectToDB, createNewError };

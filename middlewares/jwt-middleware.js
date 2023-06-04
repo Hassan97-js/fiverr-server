@@ -1,32 +1,43 @@
 import jwt from "jsonwebtoken";
 
 async function verifyToken(req, res, next) {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  if (!id) {
-    res.status(401).send("You are not authenticated! (ID)");
-    throw Error("No user ID was provided.");
-  }
-
-  const { accessToken: sentJwtToken } = req.cookies;
-
-  if (!sentJwtToken) {
-    return res.status(401).send("You are not authenticated! (JwtToken)");
-  }
-
-  jwt.verify(sentJwtToken, process.env.JWT_KEY, async (error, payload) => {
-    if (error) {
-      res.status(403).send("Token is not valid!");
-      throw Error(error.message);
+    if (!id) {
+      throw {
+        message: "No user ID was provided.",
+        statusCode: 401
+      };
     }
 
-    req.userAuth = {
-      id: payload.id,
-      isSeller: payload.isSeller
-    };
-  });
+    const { accessToken: sentJwtToken } = req.cookies;
 
-  next();
+    if (!sentJwtToken) {
+      throw {
+        message: "You are not authenticated! (jsonwebtoken is missing)",
+        statusCode: 401
+      };
+    }
+
+    jwt.verify(sentJwtToken, process.env.JWT_KEY, async (error, payload) => {
+      if (error) {
+        throw {
+          message: "Token is not valid!",
+          statusCode: 403
+        };
+      }
+
+      req.userAuth = {
+        id: payload.id,
+        isSeller: payload.isSeller
+      };
+    });
+
+    next();
+  } catch (error) {
+    next(error);
+  }
 }
 
 export { verifyToken };

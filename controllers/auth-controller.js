@@ -2,8 +2,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/index.js";
+import { createNewError } from "../utils/index.js";
 
-async function registerUser(req, res) {
+async function registerUser(req, res, next) {
   try {
     const saltRounds = 10;
     const hash = await bcrypt.hash(req.body.password, saltRounds);
@@ -15,14 +16,16 @@ async function registerUser(req, res) {
 
     await newUser.save();
 
-    res.status(201).send("User has been created.");
+    res.status(201).send({
+      message: "User has been created.",
+      statusCode: 201
+    });
   } catch (error) {
-    res.status(500).send("Something went wrong");
-    throw Error(error.message);
+    next(error);
   }
 }
 
-async function loginUser(req, res) {
+async function loginUser(req, res, next) {
   try {
     const { username, password: sentPassword } = req.body;
 
@@ -32,13 +35,19 @@ async function loginUser(req, res) {
     const foundUser = await User.findOne({ username }).lean();
 
     if (!foundUser) {
-      return res.status(404).send("User not found!");
+      return res.status(404).send({
+        message: "User not found!",
+        statusCode: 404
+      });
     }
 
     const isCorrectPassword = await bcrypt.compare(sentPassword, foundUser.password);
 
     if (!isCorrectPassword) {
-      return res.status(400).send("Wrong password or username!");
+      return res.status(400).send({
+        message: "Wrong password or username!",
+        statusCode: 400
+      });
     }
 
     const jwtToken = jwt.sign(
@@ -56,20 +65,26 @@ async function loginUser(req, res) {
       .status(200)
       .send({
         ...foundUser,
-        password: null
+        password: null,
+        message: "User has been logged in.",
+        statusCode: 200
       });
   } catch (error) {
-    res.status(500).send("Something went wrong");
-    throw Error(error.message);
+    next(error);
   }
 }
 
-async function logoutUser(req, res) {
+async function logoutUser(req, res, next) {
   try {
-    res.send("logoutUser");
+    res
+      .clearCookie("accessToken", {
+        sameSite: "none",
+        secure: true
+      })
+      .status(200)
+      .send(createNewError(200, "User has been logged out."));
   } catch (error) {
-    res.status(500).send("Something went wrong");
-    throw Error(error.message);
+    next(error);
   }
 }
 
