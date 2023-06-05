@@ -17,6 +17,8 @@ import { connectToDB, createNewError } from "./utils/index.js";
 
 const app = express();
 
+const PORT = 5500;
+
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRouter);
@@ -36,7 +38,7 @@ app.use((error, _req, res) => {
   });
 });
 
-app.listen(8800, () => {
+app.listen(PORT, () => {
   connectToDB();
-  console.log("Server is running");
+  console.log(`[server]: Running on port http://localhost:${PORT}`);
 });
