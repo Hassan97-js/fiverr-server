@@ -1,3 +1,4 @@
-import { createNewError } from "./error-util.js";
+import { createNewError } from "./error-utils.js";
+import { notFoundHandler } from "./route-utils.js";
 
-export { createNewError };
+export { createNewError, notFoundHandler };

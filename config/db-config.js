@@ -1,12 +1,14 @@
+import process from "node:process";
+
 import mongoose from "mongoose";
 
 async function connectToDB() {
   try {
-    await mongoose.connect(process.env.CONNECTION);
-    console.info("[db]: Connected");
+    const { connection } = await mongoose.connect(process.env.CONNECTION);
+    console.info("[db]: Connected:", connection.host, connection.name);
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error("Could not connect to DB");
+    process.exitCode = 1;
   }
 }
 

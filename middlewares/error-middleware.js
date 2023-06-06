@@ -1,11 +1,14 @@
 import { createNewError } from "../utils/index.js";
 
 function errorHandler(error, req, res, next) {
-  const errorMessage = error.message ? error.message : "Something went wrong!";
+  if (res.statusCode === 200) {
+    res.statusCode = 500;
+  }
 
-  const middlewareError = createNewError(errorMessage, error.stack);
+  const middlewareError = createNewError(res.statusCode, error.message, error.stack);
 
   return res.json({
+    title: middlewareError.title,
     message: middlewareError.message,
     stackTrace: middlewareError.stackTrace
   });

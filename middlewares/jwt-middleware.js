@@ -1,25 +1,28 @@
 import jwt from "jsonwebtoken";
 
+import constants from "../constants.js";
+
 async function verifyToken(req, res, next) {
   try {
-    console.log("verifyToken");
     const { id } = req.params;
 
+    const { UNAUTHORIZED, FORBIDDEN } = constants.errorCodes;
+
     if (!id) {
-      res.status(401);
+      res.status(UNAUTHORIZED);
       throw Error("No user ID was provided.");
     }
 
     const { accessToken: sentJwtToken } = req.cookies;
 
     if (!sentJwtToken) {
-      res.status(401);
+      res.status(UNAUTHORIZED);
       throw Error("You are not authenticated! (jsonwebtoken is missing).");
     }
 
     jwt.verify(sentJwtToken, process.env.JWT_KEY, async (error, payload) => {
       if (error) {
-        res.status(403);
+        res.status(FORBIDDEN);
         throw Error("Token is not valid!");
       }
 

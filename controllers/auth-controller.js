@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../models/index.js";
 
+import constants from "../constants.js";
+
 /** 
   @desc Register user and save in DB
   @route /api/auth/register
@@ -12,9 +14,18 @@ async function registerUser(req, res, next) {
   try {
     const { username, email, password, country } = req.body;
 
+    const { FORBIDDEN, VALIDATION_ERROR } = constants.errorCodes;
+
     if (!username || !email || !password || !country) {
-      res.status(400);
+      res.status(VALIDATION_ERROR);
       throw Error("All fields are mandatory!");
+    }
+
+    const foundUser = await User.findOne({ $or: [{ username }, { email }] }).lean();
+
+    if (foundUser) {
+      res.status(FORBIDDEN);
+      throw Error("The username and email fields must be unique!");
     }
 
     const saltRounds = 10;
@@ -44,8 +55,10 @@ async function loginUser(req, res, next) {
   try {
     const { username, password: sentPassword } = req.body;
 
+    const { NOT_FOUND, VALIDATION_ERROR } = constants.errorCodes;
+
     if (!username || !sentPassword) {
-      res.status(400);
+      res.status(VALIDATION_ERROR);
       throw Error("All fields are mandatory!");
     }
 
@@ -55,14 +68,14 @@ async function loginUser(req, res, next) {
     const foundUser = await User.findOne({ username }).lean();
 
     if (!foundUser) {
-      res.status(404);
+      res.status(NOT_FOUND);
       throw Error("User not found!");
     }
 
     const isCorrectPassword = await bcrypt.compare(sentPassword, foundUser.password);
 
     if (!isCorrectPassword) {
-      res.status(400);
+      res.status(VALIDATION_ERROR);
       throw Error("Wrong password or username!");
     }
 
@@ -102,7 +115,7 @@ async function logoutUser(req, res, next) {
         secure: true
       })
       .status(200)
-      .json({ message: "User has been logged out!"});
+      .json({ message: "User has been logged out!" });
   } catch (error) {
     next(error);
   }

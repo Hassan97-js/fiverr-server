@@ -14,6 +14,8 @@ import {
   authRouter
 } from "./routes/index.js";
 
+import { notFoundHandler } from "./utils/index.js";
+
 const app = express();
 
 app.use(cookieParser());
@@ -29,10 +31,6 @@ app.use("/api/review", reviewRouter);
 
 app.use(errorHandler);
 
-app.all("*", (req, res) => {
-  return res.status(404).json({
-    message: "Not Found!"
-  });
-});
+app.all("*", notFoundHandler);
 
 export default app;

@@ -1,5 +1,7 @@
 import { User } from "../models/index.js";
 
+import constants from "../constants.js";
+
 /** 
   @desc Delete user account by id
   @route /api/user/:id
@@ -9,22 +11,31 @@ async function deleteUser(req, res, next) {
   try {
     const { id: paramsId } = req.params;
 
+    const { UNAUTHORIZED, FORBIDDEN, NOT_FOUND } = constants.errorCodes;
+
     if (!paramsId) {
-      res.status(401);
+      res.status(UNAUTHORIZED);
       throw Error("No user ID was provided.");
     }
 
-    const dbUser = await User.findById(paramsId);
+    if (paramsId.length > 24) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "User ID must be of 12 bytes or a string of 24 hex characters or an integer"
+      );
+    }
+
+    const dbUser = await User.findById(paramsId).lean();
 
     if (!dbUser) {
-      res.status(404);
+      res.status(NOT_FOUND);
       throw Error("No user with ID was found!");
     }
 
     const { id: payloadId } = req.userAuth;
 
     if (payloadId !== dbUser._id.toString()) {
-      res.status(403);
+      res.status();
       throw Error("You can only delete your account!");
     }
 
