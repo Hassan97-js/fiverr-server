@@ -2,12 +2,23 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/index.js";
-import { createNewError } from "../utils/index.js";
 
+/** 
+  @desc Register user and save in DB
+  @route /api/auth/register
+  @access public
+*/
 async function registerUser(req, res, next) {
   try {
+    const { username, email, password, country } = req.body;
+
+    if (!username || !email || !password || !country) {
+      res.status(400);
+      throw Error("All fields are mandatory!");
+    }
+
     const saltRounds = 10;
-    const hash = await bcrypt.hash(req.body.password, saltRounds);
+    const hash = await bcrypt.hash(password, saltRounds);
 
     const newUser = User({
       ...req.body,
@@ -16,18 +27,27 @@ async function registerUser(req, res, next) {
 
     await newUser.save();
 
-    res.status(201).send({
-      message: "User has been created.",
-      statusCode: 201
+    res.status(201).json({
+      message: "User has been created."
     });
   } catch (error) {
     next(error);
   }
 }
 
+/** 
+  @desc Login user with jsonwebtoken
+  @route /api/auth/login
+  @access public
+*/
 async function loginUser(req, res, next) {
   try {
     const { username, password: sentPassword } = req.body;
+
+    if (!username || !sentPassword) {
+      res.status(400);
+      throw Error("All fields are mandatory!");
+    }
 
     // lean is great for high-performance,
     // read-only cases, especially when combined
@@ -35,19 +55,15 @@ async function loginUser(req, res, next) {
     const foundUser = await User.findOne({ username }).lean();
 
     if (!foundUser) {
-      return res.status(404).send({
-        message: "User not found!",
-        statusCode: 404
-      });
+      res.status(404);
+      throw Error("User not found!");
     }
 
     const isCorrectPassword = await bcrypt.compare(sentPassword, foundUser.password);
 
     if (!isCorrectPassword) {
-      return res.status(400).send({
-        message: "Wrong password or username!",
-        statusCode: 400
-      });
+      res.status(400);
+      throw Error("Wrong password or username!");
     }
 
     const jwtToken = jwt.sign(
@@ -63,17 +79,21 @@ async function loginUser(req, res, next) {
         httpOnly: true
       })
       .status(200)
-      .send({
+      .json({
         ...foundUser,
         password: null,
-        message: "User has been logged in.",
-        statusCode: 200
+        message: "User has been logged in."
       });
   } catch (error) {
     next(error);
   }
 }
 
+/** 
+  @desc logout user by clearning cookie
+  @route /api/auth/logout
+  @access public
+*/
 async function logoutUser(req, res, next) {
   try {
     res
@@ -82,7 +102,7 @@ async function logoutUser(req, res, next) {
         secure: true
       })
       .status(200)
-      .send(createNewError(200, "User has been logged out."));
+      .json({ message: "User has been logged out!"});
   } catch (error) {
     next(error);
   }
