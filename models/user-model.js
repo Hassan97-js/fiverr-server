@@ -4,34 +4,28 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: true,
-      unique: true
+      required: [true, "Please add your username"],
+      unique: [true, "Username is already taken"]
     },
     password: {
       type: String,
-      required: true
+      required: [true, "Please add your password"]
     },
     email: {
       type: String,
-      required: true,
-      unique: true
+      minLength: 10,
+      maxLength: 30,
+      lowercase: true,
+      required: [true, "Please add your email"],
+      unique: [true, "Email address is already taken"]
     },
-    imgURL: {
-      type: String,
-      required: false
-    },
+    imgURL: String,
     country: {
       type: String,
-      required: true
+      required: [true, "Please add your country"]
     },
-    phone: {
-      type: String,
-      required: false
-    },
-    description: {
-      type: String,
-      required: false
-    },
+    phone: String,
+    description: String,
     isSeller: {
       type: Boolean,
       default: false

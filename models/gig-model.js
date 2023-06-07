@@ -16,11 +16,15 @@ const gigSchema = new Schema(
     },
     totalStars: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0,
+      max: 5
     },
     starNumber: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0,
+      max: 5
     },
     category: {
       type: String,
@@ -34,10 +38,7 @@ const gigSchema = new Schema(
       type: String,
       required: true
     },
-    gigImgs: {
-      type: [String],
-      required: false
-    },
+    gigImgs: [String],
     shortTitle: {
       type: String,
       required: true
@@ -54,10 +55,7 @@ const gigSchema = new Schema(
       type: Number,
       required: true
     },
-    features: {
-      type: [String],
-      required: false
-    },
+    features: [String],
     sales: {
       type: Number,
       default: 0

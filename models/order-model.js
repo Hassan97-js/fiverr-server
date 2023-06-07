@@ -6,16 +6,15 @@ const orderSchema = new Schema(
       type: String,
       required: true
     },
-    imgURL: {
-      type: String,
-      required: false
-    },
+    imgURL: String,
     title: {
       type: String,
       required: true
     },
     price: {
       type: Number,
+      min: 1,
+      max: 10000,
       required: true
     },
     sellerId: {

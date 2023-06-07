@@ -31,12 +31,10 @@ async function registerUser(req, res, next) {
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
 
-    const newUser = User({
+    await User.create({
       ...req.body,
       password: hash
     });
-
-    await newUser.save();
 
     res.status(201).json({
       message: "User has been created."

@@ -6,6 +6,8 @@ const messageSchema = new Schema(
       type: String,
       required: true
     },
+    // type mongoose.SchemaTypes.ObjectId
+    // ref: "User"
     userId: {
       type: String,
       required: true

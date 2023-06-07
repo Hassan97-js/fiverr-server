@@ -7,10 +7,7 @@ const conversationSchema = new Schema(
       required: true,
       unique: true
     },
-    lastMessage: {
-      type: String,
-      required: false
-    },
+    lastMessage: String,
     sellerId: {
       type: String,
       required: true
