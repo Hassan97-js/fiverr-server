@@ -79,7 +79,7 @@ async function loginUser(req, res, next) {
       throw Error("Wrong password or username!");
     }
 
-    const jwtToken = jwt.sign(
+    const jwtTokenSignature = jwt.sign(
       {
         id: foundUser._id.toString(),
         isSeller: foundUser.isSeller
@@ -88,8 +88,9 @@ async function loginUser(req, res, next) {
     );
 
     res
-      .cookie("accessToken", jwtToken, {
-        httpOnly: true
+      .cookie("accessToken", jwtTokenSignature, {
+        httpOnly: true,
+        maxAge: "604800"
       })
       .status(200)
       .json({

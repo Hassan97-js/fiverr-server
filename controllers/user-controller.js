@@ -21,7 +21,7 @@ async function deleteUser(req, res, next) {
     if (paramsId.length > 24) {
       res.status(FORBIDDEN);
       throw Error(
-        "User ID must be of 12 bytes or a string of 24 hex characters or an integer"
+        "User ID must be 12 bytes or a string of 24 hex characters or an integer"
       );
     }
 
@@ -32,14 +32,14 @@ async function deleteUser(req, res, next) {
       throw Error("No user with ID was found!");
     }
 
-    const { id: payloadId } = req.userAuth;
+    const { id: jwtUserId } = req.userAuth;
 
-    if (payloadId !== dbUser._id.toString()) {
+    if (jwtUserId !== dbUser._id.toString()) {
       res.status();
       throw Error("You can only delete your account!");
     }
 
-    await User.findByIdAndDelete(payloadId);
+    await User.findByIdAndDelete(jwtUserId);
 
     return res.status(200).send({
       message: "You have deleted your account!"
