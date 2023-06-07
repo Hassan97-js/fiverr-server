@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { config } from "dotenv";
 config();
@@ -17,6 +18,8 @@ import {
 import { notFoundHandler } from "./utils/index.js";
 
 const app = express();
+
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use(cookieParser());
 app.use(express.json());

@@ -35,7 +35,7 @@ async function deleteUser(req, res, next) {
     const { id: jwtUserId } = req.userAuth;
 
     if (jwtUserId !== dbUser._id.toString()) {
-      res.status();
+      res.status(UNAUTHORIZED);
       throw Error("You can only delete your account!");
     }
 

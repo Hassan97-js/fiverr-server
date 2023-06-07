@@ -18,14 +18,14 @@ async function registerUser(req, res, next) {
 
     if (!username || !email || !password || !country) {
       res.status(VALIDATION_ERROR);
-      throw Error("All fields are mandatory!");
+      throw Error("All fields are mandatory.");
     }
 
     const foundUser = await User.findOne({ $or: [{ username }, { email }] }).lean();
 
     if (foundUser) {
       res.status(FORBIDDEN);
-      throw Error("The username and email fields must be unique!");
+      throw Error("The username and email fields must be unique.");
     }
 
     const saltRounds = 10;
@@ -57,7 +57,7 @@ async function loginUser(req, res, next) {
 
     if (!username || !sentPassword) {
       res.status(VALIDATION_ERROR);
-      throw Error("All fields are mandatory!");
+      throw Error("All fields are mandatory.");
     }
 
     // lean is great for high-performance,
@@ -67,14 +67,14 @@ async function loginUser(req, res, next) {
 
     if (!foundUser) {
       res.status(NOT_FOUND);
-      throw Error("User not found!");
+      throw Error("User not found.");
     }
 
     const isCorrectPassword = await bcrypt.compare(sentPassword, foundUser.password);
 
     if (!isCorrectPassword) {
       res.status(VALIDATION_ERROR);
-      throw Error("Wrong password or username!");
+      throw Error("Wrong password or username.");
     }
 
     const jwtTokenSignature = jwt.sign(
@@ -114,7 +114,7 @@ async function logoutUser(req, res, next) {
         secure: true
       })
       .status(200)
-      .json({ message: "User has been logged out!" });
+      .json({ message: "User has been logged out." });
   } catch (error) {
     next(error);
   }
