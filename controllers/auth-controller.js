@@ -87,6 +87,8 @@ async function loginUser(req, res, next) {
 
     res
       .cookie("accessToken", jwtTokenSignature, {
+        sameSite: "none",
+        secure: true,
         httpOnly: true,
         maxAge: "604800"
       })
@@ -111,7 +113,9 @@ async function logoutUser(req, res, next) {
     res
       .clearCookie("accessToken", {
         sameSite: "none",
-        secure: true
+        secure: true,
+        httpOnly: true,
+        maxAge: 0
       })
       .status(200)
       .json({ message: "User has been logged out." });
