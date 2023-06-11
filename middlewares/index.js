@@ -1,4 +1,5 @@
-import { verifyToken } from "./jwt-middleware.js";
+import { verifyToken, verifyUserIDValidity } from "./user-auth-middleware.js";
 import { errorHandler } from "./error-middleware.js";
 
-export { verifyToken, errorHandler };
+
+export { verifyUserIDValidity, verifyToken, errorHandler };

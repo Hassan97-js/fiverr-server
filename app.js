@@ -6,12 +6,12 @@ config();
 
 import { errorHandler } from "./middlewares/index.js";
 import {
-  userRouter,
-  conversationRouter,
-  gigRouter,
-  messageRouter,
-  orderRouter,
-  reviewRouter,
+  usersRouter,
+  conversationsRouter,
+  gigsRouter,
+  messagesRouter,
+  ordersRouter,
+  reviewsRouter,
   authRouter
 } from "./routes/index.js";
 
@@ -25,12 +25,12 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
-app.use("/api/conversation", conversationRouter);
-app.use("/api/gig", gigRouter);
-app.use("/api/message", messageRouter);
-app.use("/api/order", orderRouter);
-app.use("/api/review", reviewRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/conversations", conversationsRouter);
+app.use("/api/gigs", gigsRouter);
+app.use("/api/messages", messagesRouter);
+app.use("/api/orders", ordersRouter);
+app.use("/api/reviews", reviewsRouter);
 
 app.use(errorHandler);
 

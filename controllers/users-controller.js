@@ -3,33 +3,21 @@ import { User } from "../models/index.js";
 import constants from "../constants.js";
 
 /** 
-  @desc Delete user account by id
+  @desc Delete a user 
   @route /api/user/:id
-  @access public
+  @access private
 */
 async function deleteUser(req, res, next) {
   try {
-    const { id: paramsId } = req.params;
+    const paramsId = req.params.id;
 
-    const { UNAUTHORIZED, FORBIDDEN, NOT_FOUND } = constants.errorCodes;
-
-    if (!paramsId) {
-      res.status(UNAUTHORIZED);
-      throw Error("No user ID was provided.");
-    }
-
-    if (paramsId.length > 24) {
-      res.status(FORBIDDEN);
-      throw Error(
-        "User ID must be 12 bytes or a string of 24 hex characters or an integer"
-      );
-    }
+    const {OK, NOT_FOUND, UNAUTHORIZED} = constants.httpCodes;
 
     const dbUser = await User.findById(paramsId).lean();
 
     if (!dbUser) {
       res.status(NOT_FOUND);
-      throw Error("No user with ID was found!");
+      throw Error("No user with this ID was found!");
     }
 
     const { id: jwtUserId } = req.userAuth;
@@ -41,7 +29,7 @@ async function deleteUser(req, res, next) {
 
     await User.findByIdAndDelete(jwtUserId);
 
-    return res.status(200).send({
+    return res.status(OK).json({
       message: "You have deleted your account!"
     });
   } catch (error) {

@@ -5,6 +5,8 @@ import { User } from "../models/index.js";
 
 import constants from "../constants.js";
 
+const {OK, CREATED, FORBIDDEN, VALIDATION_ERROR, NOT_FOUND } = constants.httpCodes;
+
 /** 
   @desc Register user and save in DB
   @route /api/auth/register
@@ -14,7 +16,7 @@ async function registerUser(req, res, next) {
   try {
     const { username, email, password, country } = req.body;
 
-    const { FORBIDDEN, VALIDATION_ERROR } = constants.errorCodes;
+
 
     if (!username || !email || !password || !country) {
       res.status(VALIDATION_ERROR);
@@ -36,7 +38,7 @@ async function registerUser(req, res, next) {
       password: hash
     });
 
-    res.status(201).json({
+    res.status(CREATED).json({
       message: "User has been created."
     });
   } catch (error) {
@@ -52,8 +54,6 @@ async function registerUser(req, res, next) {
 async function loginUser(req, res, next) {
   try {
     const { username, password: sentPassword } = req.body;
-
-    const { NOT_FOUND, VALIDATION_ERROR } = constants.errorCodes;
 
     if (!username || !sentPassword) {
       res.status(VALIDATION_ERROR);
@@ -92,7 +92,7 @@ async function loginUser(req, res, next) {
         httpOnly: true,
         maxAge: "604800"
       })
-      .status(200)
+      .status(OK)
       .json({
         ...foundUser,
         password: null,
@@ -117,7 +117,7 @@ async function logoutUser(req, res, next) {
         httpOnly: true,
         maxAge: 0
       })
-      .status(200)
+      .status(OK)
       .json({ message: "User has been logged out." });
   } catch (error) {
     next(error);

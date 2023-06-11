@@ -4,15 +4,6 @@ import constants from "../constants.js";
 
 async function verifyToken(req, res, next) {
   try {
-    const { id } = req.params;
-
-    const { UNAUTHORIZED, FORBIDDEN } = constants.errorCodes;
-
-    if (!id) {
-      res.status(UNAUTHORIZED);
-      throw Error("No user ID was provided.");
-    }
-
     const { accessToken: sentJwtToken } = req.cookies;
 
     if (!sentJwtToken) {
@@ -38,4 +29,27 @@ async function verifyToken(req, res, next) {
   }
 }
 
-export { verifyToken };
+async function verifyUserIDValidity(req, res, next) {
+  try {
+    const paramsId = req.params?.id;
+
+    const { UNAUTHORIZED, FORBIDDEN } = constants.httpCodes;
+
+    if (!paramsId) {
+      res.status(UNAUTHORIZED);
+      throw Error("No user ID was provided.");
+    }
+
+    if (paramsId.length > 24) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "User ID must be 12 bytes or a string of 24 hex characters or an integer"
+      );
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+export { verifyToken, verifyUserIDValidity };

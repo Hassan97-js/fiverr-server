@@ -1,5 +1,7 @@
 const constants = {
-  errorCodes: {
+  httpCodes: {
+    OK: 200,
+    CREATED: 201,
     VALIDATION_ERROR: 400,
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,

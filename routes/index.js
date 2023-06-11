@@ -1,17 +1,17 @@
 import authRouter from "./auth-route.js";
-import userRouter from "./user-route.js";
-import gigRouter from "./gig-route.js";
-import conversationRouter from "./conversation-route.js";
-import messageRouter from "./message-route.js";
-import orderRouter from "./order-route.js";
-import reviewRouter from "./review-route.js";
+import usersRouter from "./users-route.js";
+import gigsRouter from "./gigs-route.js";
+import conversationsRouter from "./conversations-route.js";
+import messagesRouter from "./messages-route.js";
+import ordersRouter from "./orders-route.js";
+import reviewsRouter from "./reviews-route.js";
 
 export {
   authRouter,
-  userRouter,
-  gigRouter,
-  conversationRouter,
-  messageRouter,
-  orderRouter,
-  reviewRouter
+  usersRouter,
+  gigsRouter,
+  conversationsRouter,
+  messagesRouter,
+  ordersRouter,
+  reviewsRouter
 };

@@ -9,15 +9,8 @@ function createNewError(
     throw Error("message argument must be a string");
   }
 
-  const {
-    errorCodes: {
-      FORBIDDEN,
-      NOT_FOUND,
-      UNAUTHORIZED,
-      VALIDATION_ERROR,
-      SERVER_ERROR
-    }
-  } = constants;
+  const { FORBIDDEN, NOT_FOUND, UNAUTHORIZED, VALIDATION_ERROR, SERVER_ERROR } =
+    constants.httpCodes;
 
   const errorResponse = {
     title: null,
