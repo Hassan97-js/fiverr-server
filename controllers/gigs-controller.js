@@ -2,8 +2,7 @@ import { Gig } from "../models/index.js";
 
 import constants from "../constants.js";
 
-const { UNAUTHORIZED, NOT_FOUND, FORBIDDEN, CREATED, VALIDATION_ERROR } =
-  constants.httpCodes;
+const { OK, NOT_FOUND, FORBIDDEN, CREATED, VALIDATION_ERROR } = constants.httpCodes;
 
 /** 
   @desc Get all gigs
@@ -25,7 +24,25 @@ async function getAllGigs(req, res, next) {
 */
 async function getGig(req, res, next) {
   try {
-    res.send("Get a Gig controller (Authenticated)");
+    const {id: paramsGigId} = req.params;
+
+    const dbGig = await Gig.findById(paramsGigId);
+
+    if (!dbGig) {
+      res.status(NOT_FOUND);
+      throw Error("No gig found with this ID.");
+    }
+
+    const { id: userId } = req.userAuth;
+
+    if (dbGig.userId !== userId) {
+      res.status(FORBIDDEN);
+      throw Error("You can only get your gig.");
+    }
+
+    const foundGig = await Gig.findById(paramsGigId);
+
+    res.status(OK).json(foundGig);
   } catch (error) {
     next(error);
   }
@@ -39,6 +56,8 @@ async function getGig(req, res, next) {
 async function createGig(req, res, next) {
   try {
     const { id: userId, isSeller } = req.userAuth;
+
+    console.log(userId, isSeller);
 
     if (!isSeller) {
       res.status(FORBIDDEN);
@@ -63,12 +82,7 @@ async function createGig(req, res, next) {
 */
 async function deleteGig(req, res, next) {
   try {
-    const paramsGigId = req.params?.id;
-
-    if (!paramsGigId) {
-      res.status(VALIDATION_ERROR);
-      throw Error("No Gig ID was provided.");
-    }
+    const { id: paramsGigId } = req.params;
 
     const dbGig = await Gig.findById(paramsGigId);
 
@@ -80,14 +94,13 @@ async function deleteGig(req, res, next) {
     const { id: userId } = req.userAuth;
 
     if (dbGig.userId !== userId) {
-      res.status(UNAUTHORIZED);
+      res.status(FORBIDDEN);
       throw Error("You can only delete your gigs.");
     }
 
     await Gig.findByIdAndDelete(paramsGigId);
 
-    // TODO: FROM HERE
-    res.json({ message: "Gig has been deleted." });
+    res.status(OK).json({ message: "Gig has been deleted." });
   } catch (error) {
     next(error);
   }

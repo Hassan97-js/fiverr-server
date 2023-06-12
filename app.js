@@ -15,11 +15,13 @@ import {
   authRouter
 } from "./routes/index.js";
 
-import { notFoundHandler } from "./utils/index.js";
-
 const app = express();
+const corsConfig = {
+  origin: "http://localhost:5173",
+  credentials: true
+};
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors(corsConfig));
 
 app.use(cookieParser());
 app.use(express.json());
@@ -33,7 +35,5 @@ app.use("/api/orders", ordersRouter);
 app.use("/api/reviews", reviewsRouter);
 
 app.use(errorHandler);
-
-app.all("*", notFoundHandler);
 
 export default app;

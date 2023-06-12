@@ -5,6 +5,8 @@ import { verifyToken, verifyUserIDValidity } from "../middlewares/index.js";
 
 const router = express.Router();
 
-router.delete("/:id", verifyUserIDValidity, verifyToken, deleteUser);
+router.use("/:id", verifyUserIDValidity, verifyToken);
+
+router.delete("/:id", deleteUser);
 
 export default router;
