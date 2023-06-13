@@ -8,11 +8,17 @@ function errorHandler(error, req, res, next) {
   // if the app sent HTTP
   // headers for the response.
   if (res.headersSent) {
-    return next(err);
+    // forward error to
+    // the default express
+    // error handler
+    return next(error);
   }
 
   if (!res.statusCode || res.statusCode === OK) {
     res.statusCode = SERVER_ERROR;
+  }
+
+  if (!error.message) {
     error.message = "Something went wrong!";
   }
 

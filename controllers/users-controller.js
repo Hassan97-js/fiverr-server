@@ -9,7 +9,7 @@ import constants from "../constants.js";
 */
 async function deleteUser(req, res, next) {
   try {
-    const paramsId = req.params.id;
+    const {id: paramsId} = req.params;
 
     const {OK, NOT_FOUND, UNAUTHORIZED} = constants.httpCodes;
 

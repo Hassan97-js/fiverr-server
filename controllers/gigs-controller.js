@@ -1,8 +1,10 @@
 import { Gig } from "../models/index.js";
 
+import { fromKebabToPascal } from "../utils/index.js";
+
 import constants from "../constants.js";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED, VALIDATION_ERROR } = constants.httpCodes;
+const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 
 /** 
   @desc Get all gigs
@@ -11,7 +13,48 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED, VALIDATION_ERROR } = constants.httpCo
 */
 async function getAllGigs(req, res, next) {
   try {
-    res.send("Get all Gigs controller (Authenticated)");
+    const { id: userId, isSeller } = req.userAuth;
+
+    if (!isSeller) {
+      res.status(FORBIDDEN);
+      throw Error("Only sellers can have gigs.");
+    }
+
+    const userGigs = await Gig.find({ userId });
+
+    if (!userGigs) {
+      res.status(NOT_FOUND);
+      throw Error("You have not created any gigs.");
+    }
+
+    // NOTE: expect queries to be kebab-case
+    const { category = "", search = "", min = "", max = "" } = req.query;
+
+    const readyCategory = fromKebabToPascal(category);
+    const readySearch = { $regex: fromKebabToPascal(search) };
+
+    const mongoFilters = {
+      userId
+    };
+
+    if (category) {
+      mongoFilters.category = readyCategory;
+    }
+
+    if (min || max) {
+      min && (mongoFilters.price = { $gte: min });
+      max && (mongoFilters.price = { $lte: max });
+    }
+
+    if (search) {
+      mongoFilters.title = readySearch;
+    }
+
+    // console.log(mongoFilters);
+
+    const allGigs = await Gig.find(mongoFilters);
+
+    res.status(OK).json(allGigs);
   } catch (error) {
     next(error);
   }
@@ -24,7 +67,7 @@ async function getAllGigs(req, res, next) {
 */
 async function getGig(req, res, next) {
   try {
-    const {id: paramsGigId} = req.params;
+    const { id: paramsGigId } = req.params;
 
     const dbGig = await Gig.findById(paramsGigId);
 
@@ -56,8 +99,6 @@ async function getGig(req, res, next) {
 async function createGig(req, res, next) {
   try {
     const { id: userId, isSeller } = req.userAuth;
-
-    console.log(userId, isSeller);
 
     if (!isSeller) {
       res.status(FORBIDDEN);

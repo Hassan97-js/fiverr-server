@@ -5,7 +5,7 @@ import { User } from "../models/index.js";
 
 import constants from "../constants.js";
 
-const {OK, CREATED, FORBIDDEN, VALIDATION_ERROR, NOT_FOUND } = constants.httpCodes;
+const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, NOT_FOUND } = constants.httpCodes;
 
 /** 
   @desc Register user and save in DB
@@ -15,8 +15,6 @@ const {OK, CREATED, FORBIDDEN, VALIDATION_ERROR, NOT_FOUND } = constants.httpCod
 async function registerUser(req, res, next) {
   try {
     const { username, email, password, country } = req.body;
-
-
 
     if (!username || !email || !password || !country) {
       res.status(VALIDATION_ERROR);
