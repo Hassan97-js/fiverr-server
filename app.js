@@ -4,7 +4,8 @@ import cookieParser from "cookie-parser";
 import { config } from "dotenv";
 config();
 
-import { errorHandler } from "./middlewares/index.js";
+import { errorHandler, notFoundHandler } from "./middlewares/index.js";
+
 import {
   usersRouter,
   conversationsRouter,
@@ -35,5 +36,7 @@ app.use("/api/orders", ordersRouter);
 app.use("/api/reviews", reviewsRouter);
 
 app.use(errorHandler);
+
+app.use("/api/*", notFoundHandler);
 
 export default app;

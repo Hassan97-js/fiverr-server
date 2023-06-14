@@ -68,7 +68,7 @@ async function loginUser(req, res, next) {
       throw Error("User not found.");
     }
 
-    const isCorrectPassword = await bcrypt.compare(sentPassword, foundUser.password);
+    const isCorrectPassword = bcrypt.compare(sentPassword, foundUser.password);
 
     if (!isCorrectPassword) {
       res.status(VALIDATION_ERROR);
@@ -86,9 +86,9 @@ async function loginUser(req, res, next) {
     res
       .cookie("accessToken", jwtTokenSignature, {
         sameSite: "none",
-        secure: true,
         httpOnly: true,
-        maxAge: "604800"
+        secure: true
+        // maxAge: 604800
       })
       .status(OK)
       .json({
@@ -111,8 +111,8 @@ async function logoutUser(req, res, next) {
     res
       .clearCookie("accessToken", {
         sameSite: "none",
-        secure: true,
         httpOnly: true,
+        secure: true,
         maxAge: 0
       })
       .status(OK)
