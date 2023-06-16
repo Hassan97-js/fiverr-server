@@ -3,15 +3,39 @@ import { User } from "../models/index.js";
 import constants from "../constants.js";
 
 /** 
+  @desc Get a user 
+  @route /api/user/:id
+  @access private
+*/
+async function getUser(req, res, next) {
+  try {
+    const { id: paramsId } = req.params;
+
+    const { OK, NOT_FOUND } = constants.httpCodes;
+
+    const dbUser = await User.findById(paramsId).lean();
+
+    if (!dbUser) {
+      res.status(NOT_FOUND);
+      throw Error("No user with this ID was found!");
+    }
+
+    return res.status(OK).json(dbUser);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/** 
   @desc Delete a user 
   @route /api/user/:id
   @access private
 */
 async function deleteUser(req, res, next) {
   try {
-    const {id: paramsId} = req.params;
+    const { id: paramsId } = req.params;
 
-    const {OK, NOT_FOUND, UNAUTHORIZED} = constants.httpCodes;
+    const { OK, NOT_FOUND, UNAUTHORIZED } = constants.httpCodes;
 
     const dbUser = await User.findById(paramsId).lean();
 
@@ -37,4 +61,4 @@ async function deleteUser(req, res, next) {
   }
 }
 
-export { deleteUser };
+export { getUser, deleteUser };

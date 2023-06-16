@@ -6,6 +6,13 @@ import constants from "../constants.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 
+/**
+ * TODO
+ * HOW TO GET A RANGE BETWEEN MIN AND MAX?
+ *
+ *
+ * */
+
 /** 
   @desc Get all gigs
   @route /api/gigs
@@ -52,13 +59,17 @@ async function getAllGigs(req, res, next) {
       max && (mongoFilters.price = { $lte: max });
     }
 
+    if (min && max) {
+      mongoFilters.price = { $gte: min, $lte: max };
+    }
+
     if (search) {
       mongoFilters.title = readySearch;
     }
 
     const sortByKey = sortBy || "createdAt";
 
-    console.log(mongoFilters, sortByKey);
+    // console.log(JSON.stringify(mongoFilters), sortByKey);
 
     const allGigs = await Gig.find(mongoFilters).sort({
       [sortByKey]: -1

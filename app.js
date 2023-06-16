@@ -35,8 +35,8 @@ app.use("/api/messages", messagesRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/reviews", reviewsRouter);
 
-app.use(errorHandler);
-
 app.use("/api/*", notFoundHandler);
+
+app.use(errorHandler);
 
 export default app;
