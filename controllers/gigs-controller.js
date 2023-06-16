@@ -28,7 +28,13 @@ async function getAllGigs(req, res, next) {
     }
 
     // NOTE: expect queries to be kebab-case
-    const { category = "", search = "", min = "", max = "" } = req.query;
+    const {
+      sortBy = "",
+      category = "",
+      search = "",
+      min = "",
+      max = ""
+    } = req.query;
 
     const readyCategory = fromKebabToPascal(category);
     const readySearch = { $regex: fromKebabToPascal(search) };
@@ -50,9 +56,13 @@ async function getAllGigs(req, res, next) {
       mongoFilters.title = readySearch;
     }
 
-    // console.log(mongoFilters);
+    const sortByKey = sortBy || "createdAt";
 
-    const allGigs = await Gig.find(mongoFilters);
+    console.log(mongoFilters, sortByKey);
+
+    const allGigs = await Gig.find(mongoFilters).sort({
+      [sortByKey]: -1
+    });
 
     res.status(OK).json(allGigs);
   } catch (error) {

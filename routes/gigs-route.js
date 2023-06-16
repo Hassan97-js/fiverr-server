@@ -14,7 +14,7 @@ router.get(
   validate([
     query("category").trim().notEmpty().escape().optional(),
     query("title").trim().notEmpty().escape().optional(),
-    query("price").trim().notEmpty().isNumeric().escape().optional()
+    query("sortBy").trim().notEmpty().escape().optional()
   ]),
   getAllGigs
 );
