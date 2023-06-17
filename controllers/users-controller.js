@@ -4,7 +4,7 @@ import constants from "../constants.js";
 
 /** 
   @desc Get a user 
-  @route /api/user/:id
+  @route /api/users/:id
   @access private
 */
 async function getUser(req, res, next) {
@@ -28,7 +28,7 @@ async function getUser(req, res, next) {
 
 /** 
   @desc Delete a user 
-  @route /api/user/:id
+  @route /api/users/:id
   @access private
 */
 async function deleteUser(req, res, next) {

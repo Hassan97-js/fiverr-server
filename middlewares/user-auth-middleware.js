@@ -10,7 +10,7 @@ function verifyToken(req, res, next) {
 
     if (!sentJwtToken) {
       res.status(UNAUTHORIZED);
-      throw Error("You are not authenticated! (jsonwebtoken is missing).");
+      throw Error("You are not logged in");
     }
 
     jwt.verify(sentJwtToken, process.env.JWT_KEY, async (error, payload) => {
