@@ -8,8 +8,6 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 
 /**
  * TODO
- * HOW TO GET A RANGE BETWEEN MIN AND MAX?
- *
  *
  * */
 
@@ -69,8 +67,6 @@ async function getAllGigs(req, res, next) {
 
     const sortByKey = sortBy || "createdAt";
 
-    // console.log(JSON.stringify(mongoFilters), sortByKey);
-
     const allGigs = await Gig.find(mongoFilters).sort({
       [sortByKey]: -1
     });
@@ -99,12 +95,12 @@ async function getGig(req, res, next) {
 
     const { id: userId } = req.userAuth;
 
-    if (dbGig.userId !== userId) {
+    if (dbGig.userId.toString() !== userId) {
       res.status(FORBIDDEN);
       throw Error("You can only get your gig.");
     }
 
-    const foundGig = await Gig.findById(paramsGigId);
+    const foundGig = await Gig.findById(paramsGigId).populate("userId");
 
     res.status(OK).json(foundGig);
   } catch (error) {
@@ -155,7 +151,7 @@ async function deleteGig(req, res, next) {
 
     const { id: userId } = req.userAuth;
 
-    if (dbGig.userId !== userId) {
+    if (dbGig.userId.toString() !== userId) {
       res.status(FORBIDDEN);
       throw Error("You can only delete your gigs.");
     }

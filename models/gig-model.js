@@ -1,9 +1,10 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const gigSchema = new Schema(
   {
     userId: {
       type: String,
+      ref: "User",
       required: true
     },
     title: {

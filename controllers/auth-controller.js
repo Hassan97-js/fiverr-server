@@ -21,9 +21,9 @@ async function registerUser(req, res, next) {
       throw Error("All fields are mandatory.");
     }
 
-    const foundUser = await User.findOne({ $or: [{ username }, { email }] }).lean();
+    const userExists = await User.exists({ $or: [{ username }, { email }] }).lean();
 
-    if (foundUser) {
+    if (userExists) {
       res.status(FORBIDDEN);
       throw Error("The username and email fields must be unique.");
     }
