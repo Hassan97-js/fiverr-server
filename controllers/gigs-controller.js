@@ -14,23 +14,23 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 /** 
   @desc Get all gigs
   @route /api/gigs
-  @access private
+  @access public
 */
 async function getAllGigs(req, res, next) {
   try {
-    const { id: userId, isSeller } = req.userAuth;
+    // const { id: userId, isSeller } = req.userAuth;
 
-    if (!isSeller) {
-      res.status(FORBIDDEN);
-      throw Error("Only sellers can have gigs.");
-    }
+    // if (!isSeller) {
+    //   res.status(FORBIDDEN);
+    //   throw Error("Only sellers can have gigs.");
+    // }
 
-    const userGigs = await Gig.find({ userId });
+    // const userGigs = await Gig.find({ userId });
 
-    if (!userGigs) {
-      res.status(NOT_FOUND);
-      throw Error("You have not created any gigs.");
-    }
+    // if (!userGigs) {
+    //   res.status(NOT_FOUND);
+    //   throw Error("You have not created any gigs.");
+    // }
 
     // NOTE: expect queries to be kebab-case
     const {
@@ -44,9 +44,7 @@ async function getAllGigs(req, res, next) {
     const readyCategory = fromKebabToPascal(category);
     const readySearch = { $regex: fromKebabToPascal(search) };
 
-    const mongoFilters = {
-      userId
-    };
+    const mongoFilters = {};
 
     if (category) {
       mongoFilters.category = readyCategory;
@@ -67,9 +65,11 @@ async function getAllGigs(req, res, next) {
 
     const sortByKey = sortBy || "createdAt";
 
-    const allGigs = await Gig.find(mongoFilters).sort({
-      [sortByKey]: -1
-    });
+    const allGigs = await Gig.find(mongoFilters)
+      .populate("userId")
+      .sort({
+        [sortByKey]: -1
+      });
 
     res.status(OK).json(allGigs);
   } catch (error) {
@@ -80,7 +80,7 @@ async function getAllGigs(req, res, next) {
 /** 
   @desc Get a single gig
   @route /api/gigs/single/:id
-  @access private
+  @access public
 */
 async function getGig(req, res, next) {
   try {
@@ -93,12 +93,12 @@ async function getGig(req, res, next) {
       throw Error("No gig found with this ID.");
     }
 
-    const { id: userId } = req.userAuth;
+    // const { id: userId } = req.userAuth;
 
-    if (dbGig.userId.toString() !== userId) {
-      res.status(FORBIDDEN);
-      throw Error("You can only get your gig.");
-    }
+    // if (dbGig.userId.toString() !== userId) {
+    //   res.status(FORBIDDEN);
+    //   throw Error("You can only get your gig.");
+    // }
 
     const foundGig = await Gig.findById(paramsGigId).populate("userId");
 

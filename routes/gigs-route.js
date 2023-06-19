@@ -7,7 +7,6 @@ import { verifyToken, verifyGigIDValidity, validate } from "../middlewares/index
 const router = express.Router();
 
 router.use("/single/:id", verifyGigIDValidity);
-router.use(verifyToken);
 
 router.get(
   "/",
@@ -19,7 +18,7 @@ router.get(
   getAllGigs
 );
 router.get("/single/:id", getGig);
-router.post("/single", createGig);
-router.delete("/single/:id", deleteGig);
+router.post("/single", verifyToken, createGig);
+router.delete("/single/:id", verifyToken, deleteGig);
 
 export default router;
