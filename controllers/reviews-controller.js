@@ -1,5 +1,5 @@
-const fn = (req, res) => {
+async function getReviews(req, res) {
   res.send("from controller");
-};
+}
 
-export { fn };
+export { getReviews };
