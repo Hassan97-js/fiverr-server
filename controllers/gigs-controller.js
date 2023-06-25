@@ -6,11 +6,6 @@ import constants from "../constants.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 
-/**
- * TODO
- *
- * */
-
 /** 
   @desc Get all gigs
   @route /api/gigs
