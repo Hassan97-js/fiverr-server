@@ -25,7 +25,9 @@ const corsConfig = {
   credentials: true
 };
 
-app.use(cors(corsConfig));
+// https://myfiverrclone.netlify.app/
+
+app.use(cors());
 app.use(cookieParser());
 app.use(mongosanitize());
 app.use(express.json());
