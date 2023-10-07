@@ -19,8 +19,9 @@ import {
 } from "./routes/index.js";
 
 const app = express();
+
 const corsConfig = {
-  origin: "http://localhost:5173",
+  origin: "https://myfiverrclone.netlify.app/",
   credentials: true
 };
 
