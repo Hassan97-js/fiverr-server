@@ -6,15 +6,10 @@
 todos.md
 draft.txt
 
-# client
-client/node_modules
-client/commit-template.md
-client/draft.txt
-
 # server
-server/.env
-server/notes.md
-server/queries.txt
+.env
+notes.md
+queries.txt
 
 # Logs
 logs
