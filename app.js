@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
+import cookie from "cookie";
 import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
 config();
@@ -20,22 +20,6 @@ import {
 
 const app = express();
 
-const whitelist = ["http://localhost:5173", "https://myfiverrclone.netlify.app"];
-
-/* 
-{
-    origin(origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    optionsSuccessStatus: 200
-  }
-*/
-
 app.use(
   cors({
     origin: true,
@@ -44,7 +28,17 @@ app.use(
   })
 );
 
-app.use(cookieParser());
+// cookie middleware
+app.use((req, res, next) => {
+  const cookies = cookie.parse(req.headers.cookie || "");
+
+  req.headers.cookie = cookies;
+
+  res.setHeader("Content-Type", "application/json; charset=UTF-8");
+
+  next();
+});
+
 app.use(mongosanitize());
 app.use(express.json());
 

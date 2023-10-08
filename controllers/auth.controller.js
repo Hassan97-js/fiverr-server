@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import cookie from "cookie";
 
 import { User } from "../models/index.js";
 
@@ -84,17 +85,15 @@ export const signin = async (req, res, next) => {
       process.env.JWT_SECRET_KEY
     );
 
-    /* 
-    {
-        sameSite: false
-        360000ms: 4,16667 days
-        maxAge: 360000,
-        httpOnly: true
-        secure: process.env.NODE_ENV === "production"
-      }
-    */
+    const setCookie = cookie.serialize("accessToken", jwtTokenSignature, {
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: new Date().getSeconds() + 60 * 60 * 24 * 7 // 1 week
+    });
 
-    res.cookie("accessToken", jwtTokenSignature).status(OK).json({
+    res.setHeader("Set-Cookie", setCookie);
+
+    res.status(OK).json({
       id: dbUser._id.toString(),
       username: dbUser.username,
       isSeller: dbUser.isSeller,
@@ -115,12 +114,11 @@ export const signout = (req, res, next) => {
   // Note: You can use Redis cache to
   // store a blacklist of tokens
   try {
-    res
-      .clearCookie("accessToken", {
-        maxAge: 0
-      })
-      .status(OK)
-      .json({ message: "Sign out successful!" });
+    res.clearCookie("accessToken", {
+      maxAge: 0
+    });
+
+    res.status(OK).json({ message: "Sign out successful!" });
   } catch (error) {
     next(error);
   }
