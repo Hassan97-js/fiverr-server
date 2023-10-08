@@ -26,8 +26,8 @@ const whitelist = [
   "https://fiverr-server-2dn7.onrender.com"
 ];
 
-app.use(
-  cors({
+/* 
+{
     origin(origin, callback) {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);
@@ -37,8 +37,10 @@ app.use(
     },
     credentials: true,
     optionsSuccessStatus: 200
-  })
-);
+  }
+*/
+
+app.use(cors());
 
 app.use(cookieParser());
 app.use(mongosanitize());
