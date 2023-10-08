@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 
   req.headers.cookie = cookies;
 
-  res.setHeader("Content-Type", "application/json; charset=UTF-8");
+  res.setHeader("Content-Type", "text/html; charset=UTF-8");
 
   next();
 });
