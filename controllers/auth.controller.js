@@ -84,22 +84,23 @@ export const signin = async (req, res, next) => {
       process.env.JWT_SECRET_KEY
     );
 
-    res
-      .cookie("accessToken", jwtTokenSignature, {
+    /* 
+    {
         sameSite: false
-        // 360000ms: 4,16667 days
-        // maxAge: 360000,
-        // httpOnly: true
-        // secure: process.env.NODE_ENV === "production"
-      })
-      .status(OK)
-      .json({
-        id: dbUser._id.toString(),
-        username: dbUser.username,
-        isSeller: dbUser.isSeller,
-        imgURL: dbUser?.imgURL,
-        message: "Sign in successful!"
-      });
+        360000ms: 4,16667 days
+        maxAge: 360000,
+        httpOnly: true
+        secure: process.env.NODE_ENV === "production"
+      }
+    */
+
+    res.cookie("accessToken", jwtTokenSignature).status(OK).json({
+      id: dbUser._id.toString(),
+      username: dbUser.username,
+      isSeller: dbUser.isSeller,
+      imgURL: dbUser?.imgURL,
+      message: "Sign in successful!"
+    });
   } catch (error) {
     next(error);
   }
