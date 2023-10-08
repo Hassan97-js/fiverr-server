@@ -36,15 +36,15 @@ const whitelist = ["http://localhost:5173", "https://myfiverrclone.netlify.app"]
   }
 */
 
-app.use(cors());
-
 app.use(
-  cookieParser({
+  cors({
     origin: true,
     credentials: true,
     optionsSuccessStatus: 200
   })
 );
+
+app.use(cookieParser());
 app.use(mongosanitize());
 app.use(express.json());
 
