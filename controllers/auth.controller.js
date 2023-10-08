@@ -86,11 +86,11 @@ export const signin = async (req, res, next) => {
 
     res
       .cookie("accessToken", jwtTokenSignature, {
-        sameSite: false,
+        sameSite: false
         // 360000ms: 4,16667 days
         // maxAge: 360000,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production"
+        // httpOnly: true
+        // secure: process.env.NODE_ENV === "production"
       })
       .status(OK)
       .json({

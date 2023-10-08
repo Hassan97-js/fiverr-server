@@ -20,7 +20,11 @@ import {
 
 const app = express();
 
-const whitelist = ["http://localhost:5173", "https://myfiverrclone.netlify.app"];
+const whitelist = [
+  "http://localhost:5173",
+  "https://myfiverrclone.netlify.app",
+  "https://fiverr-server-2dn7.onrender.com"
+];
 
 app.use(
   cors({
