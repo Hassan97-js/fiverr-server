@@ -50,6 +50,12 @@ export const signup = async (req, res, next) => {
   @route /api/auth/signin
   @access public
 */
+/**
+ * @desc Verify user id via jwt token
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
 export const signin = async (req, res, next) => {
   try {
     const { username, password: signinPassword } = req.body;
@@ -86,8 +92,9 @@ export const signin = async (req, res, next) => {
     );
 
     const setCookie = cookie.serialize("accessToken", jwtTokenSignature, {
-      sameSite: "none",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === "production",
       maxAge: new Date().getSeconds() + 60 * 60 * 24 * 7 // 1 week
     });
 

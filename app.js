@@ -23,8 +23,7 @@ const app = express();
 app.use(
   cors({
     origin: true,
-    credentials: true,
-    optionsSuccessStatus: 200
+    credentials: true
   })
 );
 
@@ -33,8 +32,6 @@ app.use((req, res, next) => {
   const cookies = cookie.parse(req.headers.cookie || "");
 
   req.headers.cookie = cookies;
-
-  res.setHeader("Content-Type", "text/html; charset=UTF-8");
 
   next();
 });

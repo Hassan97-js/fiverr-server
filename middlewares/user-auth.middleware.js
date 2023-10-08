@@ -11,7 +11,9 @@ const { UNAUTHORIZED, FORBIDDEN } = constants.httpCodes;
  * @param {import("express").NextFunction} next
  */
 export const verifyToken = (req, res, next) => {
-  const accessToken = req.headers.cookie.accessToken;
+  const accessToken = req.headers.cookie;
+
+  console.log(req.headers.cookie);
 
   if (!accessToken) {
     res.status(UNAUTHORIZED);
