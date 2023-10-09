@@ -94,7 +94,7 @@ export const signin = async (req, res, next) => {
       sameSite: "none",
       httpOnly: true,
       secure: true,
-      maxAge: new Date().getSeconds() + 60 * 60 * 24 * 7 // 1 week
+      maxAge: 60 * 60 * 24 * 7 // 1 week
     });
 
     res.status(OK).json({
