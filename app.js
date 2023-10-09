@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import cookie from "cookie";
+import cookieParser from "cookie-parser";
 import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
 config();
@@ -27,15 +27,7 @@ app.use(
   })
 );
 
-// cookie middleware
-app.use((req, res, next) => {
-  const cookies = cookie.parse(req.headers.cookie || "");
-
-  req.headers.cookie = cookies;
-
-  next();
-});
-
+app.use(cookieParser());
 app.use(mongosanitize());
 app.use(express.json());
 

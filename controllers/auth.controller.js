@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import cookie from "cookie";
 
 import { User } from "../models/index.js";
 
@@ -9,9 +8,12 @@ import constants from "../constants.js";
 const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, NOT_FOUND } = constants.httpCodes;
 
 /** 
-  @desc Sign up user and save in DB
-  @route /api/auth/signup
-  @access public
+ * @desc Sign up user and save in DB
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/auth/signup
+ * @access public
 */
 export const signup = async (req, res, next) => {
   try {
@@ -46,16 +48,13 @@ export const signup = async (req, res, next) => {
 };
 
 /** 
-  @desc Sign in user with jwt
-  @route /api/auth/signin
-  @access public
-*/
-/**
- * @desc Verify user id via jwt token
+ * @desc Sign in user with jwt
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
- */
+ * @route /api/auth/signin
+ * @access public
+*/
 export const signin = async (req, res, next) => {
   try {
     const { username, password: signinPassword } = req.body;
@@ -91,14 +90,12 @@ export const signin = async (req, res, next) => {
       process.env.JWT_SECRET_KEY
     );
 
-    const setCookie = cookie.serialize("accessToken", jwtTokenSignature, {
+    res.cookie("accessToken", jwtTokenSignature, {
       sameSite: "lax",
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
+      secure: true,
       maxAge: new Date().getSeconds() + 60 * 60 * 24 * 7 // 1 week
     });
-
-    res.setHeader("Set-Cookie", setCookie);
 
     res.status(OK).json({
       id: dbUser._id.toString(),
@@ -113,10 +110,14 @@ export const signin = async (req, res, next) => {
 };
 
 /** 
-  @desc Sign out user by clearning cookie
-  @route /api/auth/signout
-  @access public
+ * @desc Sign out user by clearning cookie
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/auth/signout
+ * @access public
 */
+
 export const signout = (req, res, next) => {
   // Note: You can use Redis cache to
   // store a blacklist of tokens
