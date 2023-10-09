@@ -20,7 +20,12 @@ const { FORBIDDEN, NOT_FOUND, OK } = constants.httpCodes;
  */
 export const createPaymentIntent = async (req, res, next) => {
   try {
-    const { id: userId } = req.userAuth;
+    const { id: userId, isSeller } = req.userAuth;
+
+    if (isSeller) {
+      res.status(FORBIDDEN);
+      throw Error("Sellers are not allowed to make orders!");
+    }
 
     const gigId = req.body?.gigId;
 
