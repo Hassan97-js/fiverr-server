@@ -44,7 +44,7 @@ export const deleteUser = async (req, res, next) => {
       throw Error("User not found!");
     }
 
-    const { id: jwtUserId } = req.userAuth;
+    const { id: jwtUserId } = req.user;
 
     if (jwtUserId !== dbUser._id.toString()) {
       res.status(UNAUTHORIZED);

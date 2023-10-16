@@ -14,7 +14,7 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
  */
 export const createConversation = async (req, res, next) => {
   try {
-    const { isSeller, id: userId } = req.userAuth;
+    const { isSeller, id: userId } = req.user;
     const messageToId = req.body?.messageToId;
 
     if (!messageToId) {
@@ -46,7 +46,7 @@ export const createConversation = async (req, res, next) => {
  */
 export const getConversations = async (req, res, next) => {
   try {
-    const { isSeller, id: userId } = req.userAuth;
+    const { isSeller, id: userId } = req.user;
 
     const converations = await Conversation.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId })

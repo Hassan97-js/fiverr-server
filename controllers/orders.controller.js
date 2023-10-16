@@ -54,12 +54,12 @@ export const confirmOrder = async (req, res, next) => {
 export const getOrders = async (req, res, next) => {
   try {
     const completedOrders = await Order.find({
-      ...(req.userAuth.isSeller
-        ? { sellerId: req.userAuth.id }
-        : { buyerId: req.userAuth.id }),
+      ...(req.user.isSeller
+        ? { sellerId: req.user.id }
+        : { buyerId: req.user.id }),
       isCompleted: true
     })
-      .populate("gigId", ["gigCoverImg", "title", "price"])
+      .populate("gigId", ["gigCoverImage", "title", "price"])
       .populate("sellerId", "username")
       .populate("buyerId", "username")
       .lean();

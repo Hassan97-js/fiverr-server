@@ -11,27 +11,35 @@ const { UNAUTHORIZED, FORBIDDEN } = constants.httpCodes;
  * @param {import("express").NextFunction} next
  */
 export const verifyToken = (req, res, next) => {
-  const accessToken = req.cookies.accessToken;
+  try {
+    let accessToken;
 
-  if (!accessToken) {
-    res.status(UNAUTHORIZED);
-    throw Error("You are not authenticated!");
-  }
+    const authHeader = req.headers.Authorization || req.headers.authorization;
 
-  jwt.verify(accessToken, process.env.JWT_SECRET_KEY, (error, payload) => {
-    if (error) {
-      res.status(FORBIDDEN);
-      throw Error("Token is not valid!");
+    if (authHeader && authHeader.startsWith("Bearer")) {
+      accessToken = authHeader.split(" ")[1];
+
+      jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+        if (error) {
+          res.status(UNAUTHORIZED);
+          throw Error("User is not authorized!");
+        }
+
+        req.user = {
+          id: decoded.user.id,
+          image: decoded.user.image,
+          isSeller: decoded.user.isSeller
+        };
+      });
+
+      next();
+    } else {
+      res.status(UNAUTHORIZED);
+      throw Error("Token is not valid or missing!");
     }
-
-    req.userAuth = {
-      id: payload.id,
-      imgURL: payload.imgURL,
-      isSeller: payload.isSeller
-    };
-  });
-
-  next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**

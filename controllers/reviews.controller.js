@@ -33,7 +33,7 @@ export const createReview = async (req, res, next) => {
   try {
     const { gigId, description, starNumber } = req.body;
 
-    const { id: userId, isSeller } = req.userAuth;
+    const { id: userId, isSeller } = req.user;
 
     if (isSeller) {
       res.status(FORBIDDEN);

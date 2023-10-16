@@ -13,7 +13,7 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 */
 export const getMyGigs = async (req, res, next) => {
   try {
-    const { id: userId } = req.userAuth;
+    const { id: userId } = req.user;
 
     const myGigs = await Gig.find({ userId }).populate("userId");
 
@@ -87,7 +87,7 @@ export const getGig = async (req, res, next) => {
     const foundGig = await dbGig.populate("userId", [
       "username",
       "email",
-      "imgURL",
+      "image",
       "country",
       "isSeller"
     ]);
@@ -105,7 +105,7 @@ export const getGig = async (req, res, next) => {
 */
 export const createGig = async (req, res, next) => {
   try {
-    const { id: userId, isSeller } = req.userAuth;
+    const { id: userId, isSeller } = req.user;
 
     if (isSeller === false) {
       res.status(FORBIDDEN);
@@ -139,7 +139,7 @@ export const deleteGig = async (req, res, next) => {
       throw Error("Gig not found!");
     }
 
-    const { id: userId } = req.userAuth;
+    const { id: userId } = req.user;
 
     if (dbGig.userId.toString() !== userId) {
       res.status(FORBIDDEN);

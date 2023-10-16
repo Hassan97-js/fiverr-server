@@ -19,7 +19,7 @@ const userSchema = new Schema(
       required: [true, "Please add your email"],
       unique: [true, "Email address is already taken"]
     },
-    imgURL: String,
+    image: String,
     country: {
       type: String,
       required: [true, "Please add your country"]

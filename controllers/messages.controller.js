@@ -14,7 +14,7 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
  */
 export const createMessage = async (req, res, next) => {
   try {
-    const { id: userId, isSeller } = req.userAuth;
+    const { id: userId, isSeller } = req.user;
 
     const conversationId = req.body?.conversationId;
     const text = req.body?.text;
@@ -73,7 +73,7 @@ export const getMessages = async (req, res, next) => {
     const messages = await Message.find({
       conversationId
     })
-      .populate("userId", ["username", "imgURL"])
+      .populate("userId", ["username", "image"])
       .lean();
 
     return res.status(OK).json(messages);

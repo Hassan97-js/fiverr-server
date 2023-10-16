@@ -5,7 +5,7 @@ import { User } from "../models/index.js";
 
 import constants from "../constants.js";
 
-const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, NOT_FOUND } = constants.httpCodes;
+const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR } = constants.httpCodes;
 
 /**
  * @desc Sign up user and save in DB
@@ -57,16 +57,13 @@ export const signup = async (req, res, next) => {
  */
 export const signin = async (req, res, next) => {
   try {
-    const { username, password: signinPassword } = req.body;
+    const { username, password: signInPassword } = req.body;
 
-    if (!username || !signinPassword) {
+    if (!username || !signInPassword) {
       res.status(VALIDATION_ERROR);
       throw Error("All fields are required!");
     }
 
-    // lean is great for high-performance,
-    // read-only cases, especially when combined
-    // with cursors.
     const dbUser = await User.findOne({ username }).lean();
 
     if (!dbUser) {
@@ -74,36 +71,27 @@ export const signin = async (req, res, next) => {
       throw Error("Wrong password or username!");
     }
 
-    const isCorrectPassword = bcrypt.compareSync(signinPassword, dbUser.password);
+    const isCorrectPassword = await bcrypt.compare(signInPassword, dbUser.password);
 
     if (!isCorrectPassword) {
       res.status(VALIDATION_ERROR);
       throw Error("Wrong password or username!");
     }
 
-    const jwtTokenSignature = jwt.sign(
+    const accessToken = jwt.sign(
       {
-        id: dbUser._id,
-        imgURL: dbUser.imgURL,
-        isSeller: dbUser.isSeller
+        user: {
+          id: dbUser._id.toString(),
+          username: dbUser.username,
+          isSeller: dbUser.isSeller,
+          image: dbUser?.image
+        }
       },
-      process.env.JWT_SECRET_KEY
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "2 days" }
     );
 
-    res.cookie("accessToken", jwtTokenSignature, {
-      sameSite: "none",
-      httpOnly: true,
-      secure: true,
-      maxAge: 60 * 60 * 24 * 7 // 1 week
-    });
-
-    res.status(OK).json({
-      id: dbUser._id.toString(),
-      username: dbUser.username,
-      isSeller: dbUser.isSeller,
-      imgURL: dbUser?.imgURL,
-      message: "Sign in successful!"
-    });
+    res.status(OK).json(accessToken);
   } catch (error) {
     next(error);
   }
@@ -117,7 +105,6 @@ export const signin = async (req, res, next) => {
  * @route /api/auth/signout
  * @access public
  */
-
 export const signout = (req, res, next) => {
   // Note: You can use Redis cache to
   // store a blacklist of tokens
