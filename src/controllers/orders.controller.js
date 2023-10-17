@@ -1,8 +1,8 @@
-import { Order } from "../models/index.js";
+import { Order } from "#models";
+import constants from "#constants";
 
-import constants from "../constants.js";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
+const { OK, FORBIDDEN } = constants.httpCodes;
 
 /**
  * @desc Confirm an order
@@ -54,9 +54,7 @@ export const confirmOrder = async (req, res, next) => {
 export const getOrders = async (req, res, next) => {
   try {
     const completedOrders = await Order.find({
-      ...(req.user.isSeller
-        ? { sellerId: req.user.id }
-        : { buyerId: req.user.id }),
+      ...(req.user.isSeller ? { sellerId: req.user.id } : { buyerId: req.user.id }),
       isCompleted: true
     })
       .populate("gigId", ["gigCoverImage", "title", "price"])

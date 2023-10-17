@@ -5,7 +5,7 @@ import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
 config();
 
-import { errorHandler, notFoundHandler } from "./middlewares/index.js";
+import { errorHandler, notFoundHandler } from "#middlewares";
 
 import {
   userRouter,
@@ -16,7 +16,7 @@ import {
   reviewsRouter,
   authRouter,
   paymentRouter
-} from "./routes/index.js";
+} from "#routes";
 
 const app = express();
 

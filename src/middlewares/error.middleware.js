@@ -1,6 +1,6 @@
-import { createNewError } from "../utils/index.js";
+import { createNewError } from "#utils";
+import constants from "#constants";
 
-import constants from "../constants.js";
 
 export const notFoundHandler = (req, res, next) => {
   const { originalUrl: fullURL } = req;

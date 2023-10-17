@@ -1,6 +1,6 @@
-import { User } from "../models/index.js";
+import { User } from "#models";
+import constants from "#constants";
 
-import constants from "../constants.js";
 
 const { OK, NOT_FOUND } = constants.httpCodes;
 

@@ -7,8 +7,8 @@ import {
   getGig,
   createGig,
   deleteGig
-} from "../controllers/index.js";
-import { verifyToken, verifyGigIDValidity, validate } from "../middlewares/index.js";
+} from "#controllers";
+import { verifyToken, verifyGigIDValidity, validate } from "#middlewares";
 
 const router = express.Router();
 

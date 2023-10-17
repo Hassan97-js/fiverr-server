@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "server.js",
+  "main": "./src/server.js",
+  "imports": {
+    "#controllers": "./src/controllers/index.js",
+    "#constants": "./src/constants.js",
+    "#models": "./src/models/index.js",
+    "#routes": "./src/routes/index.js",
+    "#middlewares": "./src/middlewares/index.js",
+    "#config": "./src/config/index.js",
+    "#utils": "./src/utils/index.js"
+  },
   "scripts": {
     "dev": "nodemon"
   },

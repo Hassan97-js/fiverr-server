@@ -1,12 +1,7 @@
 import Stripe from "stripe";
 
-import { Order } from "../models/index.js";
-
-import { Gig } from "../models/index.js";
-
-// import { calculateOrderAmount } from "../utils/index.js";
-
-import constants from "../constants.js";
+import { Order, Gig } from "#models";
+import constants from "#constants";
 
 const { FORBIDDEN, NOT_FOUND, OK } = constants.httpCodes;
 

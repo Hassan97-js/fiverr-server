@@ -1,9 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { User } from "../models/index.js";
-
-import constants from "../constants.js";
+import { User } from "#models";
+import constants from "#constants";
 
 const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR } = constants.httpCodes;
 

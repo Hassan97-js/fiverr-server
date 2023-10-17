@@ -1,13 +1,13 @@
 import express from "express";
 
-import { verifyToken } from "../middlewares/index.js";
+import { verifyToken } from "#middlewares";
 
 import {
   getConversations,
   getConversation,
   createConversation,
   updateConversation
-} from "../controllers/index.js";
+} from "#controllers";
 
 const router = express.Router();
 

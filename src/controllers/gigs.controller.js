@@ -1,8 +1,7 @@
 import { decode } from "html-entities";
 
-import { Gig } from "../models/index.js";
-
-import constants from "../constants.js";
+import { Gig } from "#models";
+import constants from "#constants";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 

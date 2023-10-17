@@ -1,4 +1,4 @@
-import constants from "../constants.js";
+import constants from "#constants";
 
 export const createNewError = (
   statusCode = 500,

@@ -5,9 +5,9 @@ import {
   createReview,
   // getReview,
   deleteReview
-} from "../controllers/index.js";
+} from "#controllers";
 
-import { verifyToken } from "../middlewares/index.js";
+import { verifyToken } from "#middlewares";
 
 const router = express.Router();
 
