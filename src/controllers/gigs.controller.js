@@ -1,9 +1,9 @@
 import { decode } from "html-entities";
 
-import { Gig } from "#models";
+import { Gig } from "../models/index.js";
 import constants from "#constants";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
+const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = constants.httpCodes;
 
 /** 
   @desc Get a user gigs
@@ -107,8 +107,30 @@ export const createGig = async (req, res, next) => {
     const { id: userId, isSeller } = req.user;
 
     if (isSeller === false) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized!");
+    }
+
+    const dbGig = await Gig.findOne({ title: req.body.title });
+
+    if (dbGig) {
       res.status(FORBIDDEN);
-      throw Error("You are not authorized to create a gig!");
+      throw Error("You have one gig with the same title!");
+    }
+
+    if (
+      !req.body.title ||
+      !req.body.description ||
+      !req.body.category ||
+      !req.body.price ||
+      !req.body.coverImage ||
+      !req.body.shortTitle ||
+      !req.body.shortDescription ||
+      !req.body.deliveryTime ||
+      !req.body.revisionNumber
+    ) {
+      res.status(FORBIDDEN);
+      throw Error("All fields are required!");
     }
 
     const newGig = await Gig.create({
@@ -138,11 +160,11 @@ export const deleteGig = async (req, res, next) => {
       throw Error("Gig not found!");
     }
 
-    const { id: userId } = req.user;
+    const { id: loggedInUserId } = req.user;
 
-    if (dbGig.userId.toString() !== userId) {
-      res.status(FORBIDDEN);
-      throw Error("You are not authorized to delete this gig!");
+    if (dbGig.userId.toString() !== loggedInUserId) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized!");
     }
 
     await Gig.findByIdAndDelete(gigId);

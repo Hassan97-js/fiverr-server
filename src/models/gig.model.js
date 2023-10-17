@@ -35,11 +35,11 @@ const gigSchema = new Schema(
       max: 10000,
       required: true
     },
-    gigCoverImage: {
+    coverImage: {
       type: String,
       required: true
     },
-    gigImages: [String],
+    images: [String],
     shortTitle: {
       type: String,
       required: true
