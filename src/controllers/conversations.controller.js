@@ -1,4 +1,4 @@
-import { Conversation } from "../models/index.js";
+import { Conversation, User } from "../models/index.js";
 
 import constants from "../constants.js";
 
@@ -20,6 +20,35 @@ export const createConversation = async (req, res, next) => {
     if (!messageToId) {
       res.status(FORBIDDEN);
       throw Error("messageToId is required!");
+    }
+
+    if (messageToId === userId) {
+      res.status(FORBIDDEN);
+      throw Error("Forbidden!");
+    }
+
+    const dbUser = await User.findById(messageToId).lean();
+
+    if (isSeller && dbUser.isSeller) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "Seller is not allowed to create a conversation with another seller!"
+      );
+    }
+
+    if (!isSeller && !dbUser.isSeller) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "Buyer is not allowed to create a conversation with another buyer!"
+      );
+    }
+
+    const dbConversation = await Conversation.findOne({
+      fetchId: isSeller ? userId + messageToId : messageToId + userId
+    });
+
+    if (dbConversation) {
+      return res.status(CREATED).json(dbConversation);
     }
 
     const newConversation = await Conversation.create({
@@ -130,9 +159,7 @@ export const updateConversation = async (req, res, next) => {
       throw Error("Error updating conversation!");
     }
 
-    return res
-      .status(OK)
-      .json({ message: "Conversation has been updated!", updatedConversation });
+    return res.status(OK).json(updatedConversation);
   } catch (error) {
     next(error);
   }

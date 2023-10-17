@@ -11,9 +11,11 @@ import {
 
 const router = express.Router();
 
-router.get("/", verifyToken, getConversations);
-router.get("/single/:id", verifyToken, getConversation);
-router.post("/single", verifyToken, createConversation);
-router.put("/single", verifyToken, updateConversation);
+router.use(verifyToken);
+
+router.get("/", getConversations);
+router.get("/single/:id", getConversation);
+router.post("/single", createConversation);
+router.put("/single", updateConversation);
 
 export default router;
