@@ -36,7 +36,7 @@ export const confirmOrder = async (req, res, next) => {
       throw Error("Payment intent not valid!");
     }
 
-    return res.status(OK).json({ message: "Order has been confirmed!" });
+    return res.status(OK).json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -56,7 +56,7 @@ export const getOrders = async (req, res, next) => {
       ...(req.user.isSeller ? { sellerId: req.user.id } : { buyerId: req.user.id }),
       isCompleted: true
     })
-      .populate("gigId", ["gigCoverImage", "title", "price"])
+      .populate("gigId", ["coverImage", "title", "price"])
       .populate("sellerId", "username")
       .populate("buyerId", "username")
       .lean();
