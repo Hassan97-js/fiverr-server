@@ -102,7 +102,7 @@ export const signin = async (req, res, next) => {
 };
 
 /**
- * @desc Sign out user by clearning cookie
+ * @desc Sign out user
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
@@ -113,10 +113,6 @@ export const signout = (req, res, next) => {
   // Note: You can use Redis cache to
   // store a blacklist of tokens
   try {
-    // res.clearCookie("accessToken", {
-    //   maxAge: 0
-    // });
-
     res.status(OK).json({ message: "Sign out successful!" });
   } catch (error) {
     next(error);

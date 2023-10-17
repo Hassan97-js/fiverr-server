@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
 config();
@@ -27,7 +26,6 @@ app.use(
   })
 );
 
-app.use(cookieParser());
 app.use(mongosanitize());
 app.use(express.json());
 
