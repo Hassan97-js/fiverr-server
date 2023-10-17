@@ -1,6 +1,6 @@
-import { Conversation } from "#models";
+import { Conversation } from "../models/index.js";
 
-import constants from "#constants";
+import constants from "../constants.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
 

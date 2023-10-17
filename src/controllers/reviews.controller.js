@@ -1,8 +1,7 @@
-import { Gig, Review } from "#models";
-import constants from "#constants";
+import { Gig, Review } from "../models/index.js";
+import constants from "../constants.js";
 
-
-const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
+const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = constants.httpCodes;
 
 /** 
   @desc Get all reviews 
@@ -15,6 +14,7 @@ export const getReviews = async (req, res, next) => {
 
     const reviews = await Review.find({ gigId }).populate("userId", [
       "username",
+      "isSeller",
       "country"
     ]);
 
@@ -37,7 +37,7 @@ export const createReview = async (req, res, next) => {
 
     if (isSeller) {
       res.status(FORBIDDEN);
-      throw Error("Sellers can not create a review!");
+      throw Error("Sellers cannot create a review!");
     }
 
     const dbReview = await Review.findOne({ userId, gigId });
@@ -47,9 +47,7 @@ export const createReview = async (req, res, next) => {
       throw Error("You have already created a reivew!");
     }
 
-    /* *
-       TODO: check if the user purchased the gig user order Model  
-      */
+    // TODO: check if the user purchased the gig - ORDER Model
 
     const newReview = await Review.create({
       userId,
@@ -58,7 +56,7 @@ export const createReview = async (req, res, next) => {
       starNumber
     });
 
-    const updatedGig = await Gig.findOneAndUpdate(
+    await Gig.findOneAndUpdate(
       { gigId },
       {
         $inc: { totalStars: 1, starNumber }
@@ -68,7 +66,7 @@ export const createReview = async (req, res, next) => {
       }
     );
 
-    return res.status(CREATED).json({ newReview, updatedGig });
+    return res.status(CREATED).json(newReview);
   } catch (error) {
     next(error);
   }
@@ -82,17 +80,23 @@ export const createReview = async (req, res, next) => {
 export const deleteReview = async (req, res, next) => {
   try {
     const { gigId } = req.params;
+    const { id: loggedInUserId } = req.user;
 
-    const dbReview = await Review.findOne({ gigId });
+    const dbReview = await Review.findOne({ gigId, userId: loggedInUserId });
 
     if (!dbReview) {
       res.status(NOT_FOUND);
       throw Error("Review not found!");
     }
 
-    await Review.findOneAndDelete({ gigId });
+    if (dbReview.userId.toString() !== loggedInUserId) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized!");
+    }
 
-    res.status(OK).json({ message: "Review has been deleted!" });
+    await Review.findOneAndDelete({ gigId, userId: loggedInUserId });
+
+    res.status(OK).json({ success: true });
   } catch (error) {
     next(error);
   }

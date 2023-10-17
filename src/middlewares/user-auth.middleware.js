@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import constants from "#constants";
 
+import constants from "../constants.js";
 
 const { UNAUTHORIZED, FORBIDDEN } = constants.httpCodes;
 

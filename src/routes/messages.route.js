@@ -1,11 +1,8 @@
 import express from "express";
 
-import { verifyToken } from "#middlewares";
+import { verifyToken } from "../middlewares/index.js";
 
-import {
-  getMessages,
-  createMessage,
-} from "#controllers";
+import { getMessages, createMessage } from "../controllers/index.js";
 
 const router = express.Router();
 

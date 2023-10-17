@@ -1,8 +1,7 @@
-import { Conversation, Message } from "#models";
-import constants from "#constants";
+import { Conversation, Message } from "../models/index.js";
+import constants from "../constants.js";
 
-
-const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
+const { OK, FORBIDDEN, CREATED } = constants.httpCodes;
 
 /**
  * @desc Create a single message

@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
-import constants from "#constants";
 
+import constants from "../constants.js";
 
 const { VALIDATION_ERROR } = constants.httpCodes;
 

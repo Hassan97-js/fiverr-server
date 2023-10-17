@@ -1,7 +1,7 @@
 import express from "express";
 
-import { getUser, deleteUser } from "#controllers";
-import { verifyToken, verifyUserID } from "#middlewares";
+import { getUser, deleteUser } from "../controllers/index.js";
+import { verifyToken, verifyUserID } from "../middlewares/index.js";
 
 const router = express.Router();
 
