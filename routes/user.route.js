@@ -5,7 +5,8 @@ import { verifyToken, verifyUserID } from "../middlewares/index.js";
 
 const router = express.Router();
 
-router.get("/:id", verifyUserID, verifyToken, getUser);
-router.delete("/:id", verifyUserID, verifyToken, deleteUser);
+router.use("/:id", verifyUserID, verifyToken);
+
+router.route("/:id").get(getUser).delete(deleteUser);
 
 export default router;

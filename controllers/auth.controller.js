@@ -34,13 +34,18 @@ export const signup = async (req, res, next) => {
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
 
-    await User.create({
+    const newUser = await User.create({
       ...req.body,
       password: hash
     });
 
     res.status(CREATED).json({
-      message: "User has been created!"
+      id: newUser.id,
+      email: newUser.email,
+      username: newUser.username,
+      isSeller: newUser.isSeller,
+      country: newUser.country,
+      image: newUser.image ?? ""
     });
   } catch (error) {
     next(error);
@@ -109,9 +114,9 @@ export const signout = (req, res, next) => {
   // Note: You can use Redis cache to
   // store a blacklist of tokens
   try {
-    res.clearCookie("accessToken", {
-      maxAge: 0
-    });
+    // res.clearCookie("accessToken", {
+    //   maxAge: 0
+    // });
 
     res.status(OK).json({ message: "Sign out successful!" });
   } catch (error) {

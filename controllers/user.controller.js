@@ -2,6 +2,8 @@ import { User } from "../models/index.js";
 
 import constants from "../constants.js";
 
+const { OK, NOT_FOUND } = constants.httpCodes;
+
 /** 
   @desc Get a user 
   @route /api/user/:id
@@ -11,16 +13,20 @@ export const getUser = async (req, res, next) => {
   try {
     const { id: paramsId } = req.params;
 
-    const { OK, NOT_FOUND } = constants.httpCodes;
-
     const dbUser = await User.findById(paramsId).lean();
 
     if (!dbUser) {
       res.status(NOT_FOUND);
-      throw Error("User not found!");
+      throw Error("User does not exist!");
     }
 
-    return res.status(OK).json(dbUser);
+    return res.status(OK).json({
+      id: dbUser._id,
+      username: dbUser.username,
+      email: dbUser.email,
+      isSeller: dbUser.isSeller,
+      country: dbUser.country
+    });
   } catch (error) {
     next(error);
   }
@@ -44,17 +50,17 @@ export const deleteUser = async (req, res, next) => {
       throw Error("User not found!");
     }
 
-    const { id: jwtUserId } = req.user;
+    const { id: loggedInUserId } = req.user;
 
-    if (jwtUserId !== dbUser._id.toString()) {
+    if (loggedInUserId !== dbUser._id.toString()) {
       res.status(UNAUTHORIZED);
-      throw Error("You are not authorized to delete this account!");
+      throw Error("Unauthorized!");
     }
 
-    await User.findByIdAndDelete(jwtUserId);
+    await User.findByIdAndDelete(loggedInUserId);
 
     return res.status(OK).json({
-      message: "Account has been deleted!"
+      message: "User deleted!"
     });
   } catch (error) {
     next(error);

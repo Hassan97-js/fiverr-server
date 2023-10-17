@@ -53,7 +53,7 @@ export const verifyUserID = (req, res, next) => {
     const paramsId = req.params?.id;
 
     if (!paramsId) {
-      res.status(UNAUTHORIZED);
+      res.status(FORBIDDEN);
       throw Error("No user ID was provided!");
     }
 
