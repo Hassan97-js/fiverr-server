@@ -26,26 +26,26 @@ export const createPaymentIntent = async (req, res, next) => {
 
     if (!gigId) {
       res.status(FORBIDDEN);
-      throw Error("gigId is required!");
+      throw Error("Gig ID is required!");
     }
 
-    const gig = await Gig.findById(gigId).lean();
+    const dbGig = await Gig.findById(gigId).lean();
 
-    if (!gig) {
+    if (!dbGig) {
       res.status(NOT_FOUND);
       throw Error("Gig not found!");
     }
 
-    if (gig.userId === userId) {
+    if (dbGig.userId === userId) {
       res.status(FORBIDDEN);
-      throw Error("Only clients are allowed to order a gig!");
+      throw Error("You are the owner of the gig!");
     }
 
     const stripe = new Stripe(process.env.STRIPE_TEST_SECRECT_KEY);
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: gig.price * 100,
+      amount: dbGig.price * 100,
       currency: "sek",
       automatic_payment_methods: {
         enabled: true
@@ -56,11 +56,11 @@ export const createPaymentIntent = async (req, res, next) => {
 
     await Order.create({
       gigId,
-      image: gig.gigCoverImage,
-      title: gig.title,
+      image: dbGig.coverImage,
+      title: dbGig.title,
       buyerId: req.user.id,
-      sellerId: gig.userId,
-      price: gig.price,
+      sellerId: dbGig.userId,
+      price: dbGig.price,
       payment_intent: paymentIntent.id
     });
 
