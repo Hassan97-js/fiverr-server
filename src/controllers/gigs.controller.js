@@ -22,11 +22,14 @@ export const getMyGigs = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Get all gigs
-  @route /api/gigs
-  @access public
-*/
+/**
+ * @desc Get all gigs
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/gigs
+ * @access public
+ */
 export const getGigs = async (req, res, next) => {
   try {
     const { sort: sortBy, search, min, max } = req.query;
@@ -67,11 +70,14 @@ export const getGigs = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Get a single gig
-  @route /api/gigs/single/:id
-  @access public
-*/
+/**
+ * @desc Get a single gig
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/gigs/single/:id
+ * @access public
+ */
 export const getGig = async (req, res, next) => {
   try {
     const { id: gigId } = req.params;
@@ -97,11 +103,14 @@ export const getGig = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Create a new gig
-  @route /api/gigs/single
-  @access private
-*/
+/**
+ *  @desc Create a new gig
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/gigs/single
+ * @access private
+ */
 export const createGig = async (req, res, next) => {
   try {
     const { id: userId, isSeller } = req.user;
@@ -144,11 +153,14 @@ export const createGig = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Delete a gig
-  @route /api/gigs/single/:id
-  @access private
-*/
+/**
+ * @desc Delete a gig
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/gigs/single/:id
+ * @access private
+ */
 export const deleteGig = async (req, res, next) => {
   try {
     const { id: gigId } = req.params;

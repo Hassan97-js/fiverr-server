@@ -3,11 +3,14 @@ import constants from "../constants.js";
 
 const { OK, NOT_FOUND } = constants.httpCodes;
 
-/** 
-  @desc Get a user 
-  @route /api/user/:id
-  @access private
-*/
+/**
+ * @desc Get a user
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/user/:id
+ * @access private
+ */
 export const getUser = async (req, res, next) => {
   try {
     const { id: paramsId } = req.params;
@@ -31,11 +34,14 @@ export const getUser = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Delete a user 
-  @route /api/user/:id
-  @access private
-*/
+/**
+ * @desc Delete a user
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/user/:id
+ * @access private
+ */
 export const deleteUser = async (req, res, next) => {
   try {
     const { id: paramsId } = req.params;

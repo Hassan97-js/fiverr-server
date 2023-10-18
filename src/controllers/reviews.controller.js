@@ -3,11 +3,14 @@ import constants from "../constants.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = constants.httpCodes;
 
-/** 
-  @desc Get all reviews 
-  @route /api/reviews/:gigId
-  @access public 
-*/
+/**
+ * @desc Get all reviews
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/reviews/:gigId
+ * @access public
+ */
 export const getReviews = async (req, res, next) => {
   try {
     const { gigId } = req.params;
@@ -24,11 +27,14 @@ export const getReviews = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Create a review
-  @route /api/reviews/single
-  @access private
-*/
+/**
+ * @desc Create a review
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/reviews/single
+ * @access private
+ */
 export const createReview = async (req, res, next) => {
   try {
     const { gigId, description, starNumber } = req.body;
@@ -72,11 +78,14 @@ export const createReview = async (req, res, next) => {
   }
 };
 
-/** 
-  @desc Delete a review
-  @route /api/reviews/single/:gigId
-  @access public
-*/
+/**
+ * @desc Delete a review
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/reviews/single/:gigId
+ * @access public
+ */
 export const deleteReview = async (req, res, next) => {
   try {
     const { gigId } = req.params;

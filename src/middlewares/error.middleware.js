@@ -1,17 +1,35 @@
 import { createNewError } from "../utils/index.js";
 import constants from "../constants.js";
 
+/**
+ * @desc  Catch not found error
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
 export const notFoundHandler = (req, res, next) => {
-  const { originalUrl: fullURL } = req;
+  try {
+    const { originalUrl: fullURL } = req;
 
-  const sliceStartIndex = fullURL.lastIndexOf("/") + 1;
-  const notFoundRoute = fullURL.slice(sliceStartIndex);
+    const sliceStartIndex = fullURL.lastIndexOf("/") + 1;
+    const notFoundRoute = fullURL.slice(sliceStartIndex);
 
-  const { NOT_FOUND } = constants.httpCodes;
+    const { NOT_FOUND } = constants.httpCodes;
 
-  res.status(NOT_FOUND).json({ message: `"${notFoundRoute}" page not found.` });
+    return res
+      .status(NOT_FOUND)
+      .json({ message: `"${notFoundRoute}" page not found.` });
+  } catch (error) {
+    next(error);
+  }
 };
 
+/**
+ * @desc  Catch any error
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
 export const errorHandler = (error, req, res, next) => {
   const { SERVER_ERROR, OK } = constants.httpCodes;
 
@@ -28,7 +46,9 @@ export const errorHandler = (error, req, res, next) => {
     res.statusCode = SERVER_ERROR;
   }
 
-  !error.message && (error.message = "Something went wrong!");
+  if (!error.message) {
+    error.message = "Something went wrong!";
+  }
 
   const middlewareError = createNewError(res.statusCode, error.message, error.stack);
 
