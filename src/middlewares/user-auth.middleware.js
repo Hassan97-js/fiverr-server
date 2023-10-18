@@ -25,11 +25,7 @@ export const verifyToken = (req, res, next) => {
           throw Error("User is not authorized!");
         }
 
-        req.user = {
-          id: decoded.user.id,
-          image: decoded.user.image,
-          isSeller: decoded.user.isSeller
-        };
+        req.user = decoded.user;
       });
 
       next();

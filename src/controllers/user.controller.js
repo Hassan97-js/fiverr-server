@@ -8,27 +8,21 @@ const { OK, NOT_FOUND } = constants.httpCodes;
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
- * @route /api/user/:id
+ * @route /api/user/current
  * @access private
  */
 export const getUser = async (req, res, next) => {
   try {
-    const { id: paramsId } = req.params;
+    const { id: userId } = req.user;
 
-    const dbUser = await User.findById(paramsId).lean();
+    const dbUser = await User.findById(userId).lean();
 
     if (!dbUser) {
       res.status(NOT_FOUND);
       throw Error("User does not exist!");
     }
 
-    return res.status(OK).json({
-      id: dbUser._id,
-      username: dbUser.username,
-      email: dbUser.email,
-      isSeller: dbUser.isSeller,
-      country: dbUser.country
-    });
+    return res.status(OK).json(req.user);
   } catch (error) {
     next(error);
   }

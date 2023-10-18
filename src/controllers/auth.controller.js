@@ -88,7 +88,8 @@ export const signin = async (req, res, next) => {
           id: dbUser._id.toString(),
           username: dbUser.username,
           isSeller: dbUser.isSeller,
-          image: dbUser?.image
+          image: dbUser?.image,
+          country: dbUser.country
         }
       },
       process.env.ACCESS_TOKEN_SECRET,
