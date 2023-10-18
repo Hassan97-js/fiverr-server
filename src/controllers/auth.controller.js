@@ -95,7 +95,7 @@ export const signin = async (req, res, next) => {
       { expiresIn: "2 days" }
     );
 
-    res.status(OK).json(accessToken);
+    res.status(OK).json({ accessToken });
   } catch (error) {
     next(error);
   }
