@@ -5,16 +5,19 @@ import constants from "../constants.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = constants.httpCodes;
 
-/** 
-  @desc Get a user gigs
-  @route /api/gigs/my
-  @access private
-*/
+/**
+ * @desc Get a user gigs
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/gigs/my
+ * @access private
+ */
 export const getMyGigs = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
 
-    const myGigs = await Gig.find({ userId }).populate("userId");
+    const myGigs = await Gig.find({ userId }).populate("userId").lean();
 
     res.status(OK).json(myGigs);
   } catch (error) {
@@ -62,7 +65,8 @@ export const getGigs = async (req, res, next) => {
       .populate("userId")
       .sort({
         [sortByKey]: -1
-      });
+      })
+      .lean();
 
     res.status(OK).json(gigs);
   } catch (error) {
@@ -81,6 +85,11 @@ export const getGigs = async (req, res, next) => {
 export const getGig = async (req, res, next) => {
   try {
     const { id: gigId } = req.params;
+
+    if (!gigId) {
+      res.status(FORBIDDEN);
+      throw Error("Gig ID is required!");
+    }
 
     const dbGig = await Gig.findById(gigId);
 
@@ -115,12 +124,12 @@ export const createGig = async (req, res, next) => {
   try {
     const { id: userId, isSeller } = req.user;
 
-    if (isSeller === false) {
+    if (!isSeller) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized!");
     }
 
-    const dbGig = await Gig.findOne({ title: req.body.title });
+    const dbGig = await Gig.findOne({ title: req.body.title }).lean();
 
     if (dbGig) {
       res.status(FORBIDDEN);
@@ -165,7 +174,12 @@ export const deleteGig = async (req, res, next) => {
   try {
     const { id: gigId } = req.params;
 
-    const dbGig = await Gig.findById(gigId);
+    if (!gigId) {
+      res.status(FORBIDDEN);
+      throw Error("Gig ID is required!");
+    }
+
+    const dbGig = await Gig.findById(gigId).lean();
 
     if (!dbGig) {
       res.status(NOT_FOUND);

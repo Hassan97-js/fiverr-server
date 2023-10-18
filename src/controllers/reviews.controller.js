@@ -15,6 +15,11 @@ export const getReviews = async (req, res, next) => {
   try {
     const { gigId } = req.params;
 
+    if (!gigId) {
+      res.status(FORBIDDEN);
+      throw Error("Gig ID is required!");
+    }
+
     const reviews = await Review.find({ gigId }).populate("userId", [
       "username",
       "isSeller",
@@ -37,16 +42,20 @@ export const getReviews = async (req, res, next) => {
  */
 export const createReview = async (req, res, next) => {
   try {
+    const { id: userId, isSeller } = req.user;
     const { gigId, description, starNumber } = req.body;
 
-    const { id: userId, isSeller } = req.user;
+    if (!gigId || !description || !starNumber) {
+      res.status(FORBIDDEN);
+      throw Error("All fields are required!");
+    }
 
     if (isSeller) {
       res.status(FORBIDDEN);
       throw Error("Sellers cannot create a review!");
     }
 
-    const dbReview = await Review.findOne({ userId, gigId });
+    const dbReview = await Review.findOne({ userId, gigId }).lean();
 
     if (dbReview) {
       res.status(FORBIDDEN);
@@ -88,10 +97,15 @@ export const createReview = async (req, res, next) => {
  */
 export const deleteReview = async (req, res, next) => {
   try {
-    const { gigId } = req.params;
     const { id: loggedInUserId } = req.user;
+    const { gigId } = req.params;
 
-    const dbReview = await Review.findOne({ gigId, userId: loggedInUserId });
+    if (!gigId) {
+      res.status(FORBIDDEN);
+      throw Error("Gig ID is required!");
+    }
+
+    const dbReview = await Review.findOne({ gigId, userId: loggedInUserId }).lean();
 
     if (!dbReview) {
       res.status(NOT_FOUND);

@@ -140,7 +140,7 @@ export const updateConversation = async (req, res, next) => {
 
     if (!conversationId) {
       res.status(FORBIDDEN);
-      throw Error("Conversation id is required!");
+      throw Error("Conversation ID is required!");
     }
 
     const updatedConversation = await Conversation.findOneAndUpdate(
