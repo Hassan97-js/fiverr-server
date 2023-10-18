@@ -44,7 +44,7 @@ export const createMessage = async (req, res, next) => {
         }
       },
       { new: true }
-    ).lean();
+    );
 
     return res.status(CREATED).json(newMessage);
   } catch (error) {
@@ -77,7 +77,6 @@ export const getMessages = async (req, res, next) => {
 
     return res.status(OK).json(messages);
   } catch (error) {
-    console.log(error.message);
     next(error);
   }
 };

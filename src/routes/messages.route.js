@@ -6,7 +6,9 @@ import { getMessages, createMessage } from "../controllers/index.js";
 
 const router = express.Router();
 
-router.get("/:id", verifyToken, getMessages);
-router.post("/single", verifyToken, createMessage);
+router.use(verifyToken);
+
+router.get("/:id", getMessages);
+router.post("/single", createMessage);
 
 export default router;
