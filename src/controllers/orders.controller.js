@@ -20,7 +20,16 @@ export const confirmOrder = async (req, res, next) => {
       throw Error("Payment intent is required!");
     }
 
-    const order = await Order.findOneAndUpdate(
+    const order = await Order.findOne({
+      payment_intent: paymentIntent
+    }).lean();
+
+    if (!order) {
+      res.status(FORBIDDEN);
+      throw Error("Payment intent not valid!");
+    }
+
+    await Order.findOneAndUpdate(
       {
         payment_intent: paymentIntent
       },
@@ -30,11 +39,6 @@ export const confirmOrder = async (req, res, next) => {
         }
       }
     );
-
-    if (!order) {
-      res.status(FORBIDDEN);
-      throw Error("Payment intent not valid!");
-    }
 
     return res.status(OK).json({ success: true });
   } catch (error) {
