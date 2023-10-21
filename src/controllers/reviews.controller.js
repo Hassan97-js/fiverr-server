@@ -22,8 +22,10 @@ export const getReviews = async (req, res, next) => {
 
     const reviews = await Review.find({ gigId }).populate("userId", [
       "username",
-      "isSeller",
-      "country"
+      "email",
+      "image",
+      "country",
+      "isSeller"
     ]);
 
     return res.status(OK).json(reviews);

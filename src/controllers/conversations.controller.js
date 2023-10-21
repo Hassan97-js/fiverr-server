@@ -83,8 +83,8 @@ export const getConversations = async (req, res, next) => {
       .sort({
         updatedAt: -1
       })
-      .populate("sellerId", "username")
-      .populate("buyerId", "username")
+      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     return res.status(OK).json(converations);
@@ -111,8 +111,8 @@ export const getConversation = async (req, res, next) => {
     }
 
     const conversation = await Conversation.findOne({ fetchId: conversationId })
-      .populate("sellerId", "username")
-      .populate("buyerId", "username")
+      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId",  ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     if (!conversation) {

@@ -72,7 +72,7 @@ export const getMessages = async (req, res, next) => {
     const messages = await Message.find({
       conversationId
     })
-      .populate("userId", ["username", "image"])
+      .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     return res.status(OK).json(messages);

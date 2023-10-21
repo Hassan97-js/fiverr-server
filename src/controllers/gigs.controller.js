@@ -17,7 +17,9 @@ export const getMyGigs = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
 
-    const myGigs = await Gig.find({ userId }).populate("userId").lean();
+    const myGigs = await Gig.find({ userId })
+      .populate("userId", ["username", "email", "image", "country", "isSeller"])
+      .lean();
 
     res.status(OK).json(myGigs);
   } catch (error) {
@@ -62,7 +64,7 @@ export const getGigs = async (req, res, next) => {
     const sortByKey = sortBy || "createdAt";
 
     const gigs = await Gig.find(filterQuery)
-      .populate("userId")
+      .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .sort({
         [sortByKey]: -1
       })
