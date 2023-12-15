@@ -1,8 +1,8 @@
 import { validationResult } from "express-validator";
 
-import constants from "../constants.js";
+import { httpsCodes } from "../constants.js";
 
-const { VALIDATION_ERROR } = constants.httpCodes;
+const { VALIDATION_ERROR } = httpsCodes;
 
 export const validate = (validations) => {
   if (!validations || !Array.isArray(validations)) {

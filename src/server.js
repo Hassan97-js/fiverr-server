@@ -1,9 +1,7 @@
 import app from "./app.js";
 
-import { connectToDB } from "./utils/index.js";
-
-const PORT = process.env.PORT || 5001;
-const BASE_URL = process.env.BASE_URL;
+import { connectToDB } from "./utils/db.js";
+import { BASE_URL, PORT } from "./config/index.js";
 
 app.listen(PORT, () => {
   connectToDB();

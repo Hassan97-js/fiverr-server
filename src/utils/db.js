@@ -1,10 +1,11 @@
+import mongoose from "mongoose";
 import process from "node:process";
 
-import mongoose from "mongoose";
+import { DB_URI } from "../config/index.js";
 
 export const connectToDB = async () => {
   try {
-    const { connection } = await mongoose.connect(process.env.DB_URI);
+    const { connection } = await mongoose.connect(DB_URI);
     console.info(`[db]: Connected to ${connection.host}/${connection.name}`);
   } catch (error) {
     console.error("Could not connect to DB");

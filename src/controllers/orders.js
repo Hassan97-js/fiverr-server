@@ -61,20 +61,8 @@ export const getOrders = async (req, res, next) => {
       isCompleted: true
     })
       .populate("gigId", ["coverImage", "title", "price"])
-      .populate("sellerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller"
-      ])
-      .populate("buyerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller"
-      ])
+      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     return res.status(OK).json(completedOrders);

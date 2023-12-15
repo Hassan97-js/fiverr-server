@@ -112,7 +112,7 @@ export const getConversation = async (req, res, next) => {
 
     const conversation = await Conversation.findOne({ fetchId: conversationId })
       .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
-      .populate("buyerId",  ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     if (!conversation) {

@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 
 import constants from "../constants.js";
+import { SECRET_ACCESS_TOKEN } from "../config/index.js";
 
-const { UNAUTHORIZED, FORBIDDEN } = constants.httpCodes;
+const { UNAUTHORIZED, FORBIDDEN, VALIDATION_ERROR } = constants.httpCodes;
 
 /**
  * @desc Verify user id via jwt token
@@ -19,7 +20,7 @@ export const verifyToken = (req, res, next) => {
     if (authHeader && authHeader.startsWith("Bearer")) {
       accessToken = authHeader.split(" ")[1];
 
-      jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+      jwt.verify(accessToken, SECRET_ACCESS_TOKEN, (error, decoded) => {
         if (error) {
           res.status(UNAUTHORIZED);
           throw Error("User is not authorized!");
@@ -57,6 +58,34 @@ export const verifyUserID = (req, res, next) => {
       res.status(FORBIDDEN);
       throw Error(
         "User ID must be 12 bytes or a string of 24 hex characters or an integer"
+      );
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc Verify user id via http params
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
+export const verifyGigIDValidity = (req, res, next) => {
+  try {
+    const paramsGigId = req.params?.id;
+
+    if (!paramsGigId) {
+      res.status(VALIDATION_ERROR);
+      throw Error("No Gig ID was provided.");
+    }
+
+    if (paramsGigId.length > 24) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "Gig ID must be 12 bytes or a string of 24 hex characters or an integer"
       );
     }
 

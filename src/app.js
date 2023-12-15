@@ -4,25 +4,23 @@ import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
 config();
 
-import { errorHandler, notFoundHandler } from "./middlewares/index.js";
+import userRouter from "./routes/user.js";
+import conversationsRouter from "./routes/conversations.js";
+import gigsRouter from "./routes/gigs.js";
+import messagesRouter from "./routes/messages.js";
+import ordersRouter from "./routes/orders.js";
+import reviewsRouter from "./routes/reviews.js";
+import authRouter from "./routes/auth.js";
+import paymentRouter from "./routes/payment.js";
 
-import {
-  userRouter,
-  conversationsRouter,
-  gigsRouter,
-  messagesRouter,
-  ordersRouter,
-  reviewsRouter,
-  authRouter,
-  paymentRouter
-} from "./routes/index.js";
+import { errorHandler, notFoundHandler } from "./middlewares/catch-error.js";
 
 const app = express();
 
 app.use(
   cors({
     origin: true,
-    credentials: true
+    credentials: true,
   })
 );
 

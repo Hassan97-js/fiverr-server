@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 
 import { Order, Gig } from "../models/index.js";
+import { STRIPE_TEST_SECRECT_KEY } from "../config/index.js";
 import constants from "../constants.js";
 
 const { FORBIDDEN, NOT_FOUND, OK } = constants.httpCodes;
@@ -41,16 +42,16 @@ export const createPaymentIntent = async (req, res, next) => {
       throw Error("You are the owner of the gig!");
     }
 
-    const stripe = new Stripe(process.env.STRIPE_TEST_SECRECT_KEY);
+    const stripe = new Stripe(STRIPE_TEST_SECRECT_KEY);
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount: dbGig.price * 100,
       currency: "sek",
       automatic_payment_methods: {
-        enabled: true
+        enabled: true,
         // allow_redirects: "never"
-      }
+      },
       // confirm: true
     });
 
@@ -61,7 +62,7 @@ export const createPaymentIntent = async (req, res, next) => {
       buyerId: req.user.id,
       sellerId: dbGig.userId,
       price: dbGig.price,
-      payment_intent: paymentIntent.id
+      payment_intent: paymentIntent.id,
     });
 
     return res.status(OK).json({ clientSecret: paymentIntent.client_secret });

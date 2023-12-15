@@ -2,9 +2,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/index.js";
-import constants from "../constants.js";
+import { httpsCodes } from "../constants.js";
 
-const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR } = constants.httpCodes;
+import { SECRET_ACCESS_TOKEN } from "../config/index.js";
+
+const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR } = httpsCodes;
 
 /**
  * @desc Sign up user and save in DB
@@ -14,7 +16,7 @@ const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR } = constants.httpCodes;
  * @route /api/auth/signup
  * @access public
  */
-export const signup = async (req, res, next) => {
+export const signUp = async (req, res, next) => {
   try {
     const { username, email, password, country } = req.body;
 
@@ -23,7 +25,9 @@ export const signup = async (req, res, next) => {
       throw Error("All fields are required!");
     }
 
-    const userExists = await User.exists({ $or: [{ username }, { email }] }).lean();
+    const userExists = await User.exists({
+      $or: [{ username }, { email }],
+    }).lean();
 
     if (userExists) {
       res.status(FORBIDDEN);
@@ -35,7 +39,7 @@ export const signup = async (req, res, next) => {
 
     const newUser = await User.create({
       ...req.body,
-      password: hash
+      password: hash,
     });
 
     res.status(CREATED).json({
@@ -44,7 +48,7 @@ export const signup = async (req, res, next) => {
       username: newUser.username,
       isSeller: newUser.isSeller,
       country: newUser.country,
-      image: newUser.image ?? ""
+      image: newUser.image ?? "",
     });
   } catch (error) {
     next(error);
@@ -59,7 +63,7 @@ export const signup = async (req, res, next) => {
  * @route /api/auth/signin
  * @access public
  */
-export const signin = async (req, res, next) => {
+export const signIn = async (req, res, next) => {
   try {
     const { username, password: signInPassword } = req.body;
 
@@ -75,7 +79,10 @@ export const signin = async (req, res, next) => {
       throw Error("Wrong password or username!");
     }
 
-    const isCorrectPassword = await bcrypt.compare(signInPassword, dbUser.password);
+    const isCorrectPassword = await bcrypt.compare(
+      signInPassword,
+      dbUser.password
+    );
 
     if (!isCorrectPassword) {
       res.status(VALIDATION_ERROR);
@@ -89,10 +96,10 @@ export const signin = async (req, res, next) => {
           username: dbUser.username,
           isSeller: dbUser.isSeller,
           image: dbUser?.image,
-          country: dbUser.country
-        }
+          country: dbUser.country,
+        },
       },
-      process.env.ACCESS_TOKEN_SECRET,
+      SECRET_ACCESS_TOKEN,
       { expiresIn: "2 days" }
     );
 
@@ -110,7 +117,7 @@ export const signin = async (req, res, next) => {
  * @route /api/auth/signout
  * @access public
  */
-export const signout = (req, res, next) => {
+export const signOut = (req, res, next) => {
   // Note: You can use Redis cache to
   // store a blacklist of tokens
   try {
