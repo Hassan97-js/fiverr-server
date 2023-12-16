@@ -2,7 +2,9 @@ import express from "express";
 import { check } from "express-validator";
 
 import { signIn, signOut, signUp } from "../controllers/auth";
+
 import { validate } from "../middlewares/validate.js";
+import { verifyToken } from "../middlewares/verify.js";
 
 const router = express.Router();
 
@@ -27,6 +29,6 @@ router.post(
   ]),
   signIn
 );
-router.post("/sign-out", signOut);
+router.post("/sign-out", verifyToken, signOut);
 
 export default router;

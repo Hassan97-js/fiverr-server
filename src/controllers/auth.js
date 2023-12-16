@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
-import { User } from "../models/index.js";
+import BlackList from "../models/black-list.js";
+import User from "../models/user.js";
+
+import { generateJWT } from "../utils/jwt.js";
 import { httpsCodes } from "../constants.js";
 
-import { SECRET_ACCESS_TOKEN } from "../config/index.js";
-
-const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR } = httpsCodes;
+const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Sign up user and save in DB
@@ -22,16 +22,14 @@ export const signUp = async (req, res, next) => {
 
     if (!username || !email || !password || !country) {
       res.status(VALIDATION_ERROR);
-      throw Error("All fields are required!");
+      throw Error("All fields are required");
     }
 
-    const userExists = await User.exists({
-      $or: [{ username }, { email }],
-    }).lean();
+    const isUserExists = await User.exists({ username }).lean();
 
-    if (userExists) {
+    if (isUserExists) {
       res.status(FORBIDDEN);
-      throw Error("The username and email fields must be unique!");
+      throw Error("Email is already exists");
     }
 
     const saltRounds = 10;
@@ -65,45 +63,50 @@ export const signUp = async (req, res, next) => {
  */
 export const signIn = async (req, res, next) => {
   try {
-    const { username, password: signInPassword } = req.body;
+    const { username, password: sentPassword } = req.body;
 
-    if (!username || !signInPassword) {
+    if (!username || !sentPassword) {
       res.status(VALIDATION_ERROR);
-      throw Error("All fields are required!");
+      throw Error("All fields are required");
     }
 
-    const dbUser = await User.findOne({ username }).lean();
+    const user = await User.findOne({ username }).select("+password").lean();
 
-    if (!dbUser) {
+    if (!user) {
       res.status(VALIDATION_ERROR);
       throw Error("Wrong password or username!");
     }
 
-    const isCorrectPassword = await bcrypt.compare(
-      signInPassword,
-      dbUser.password
-    );
+    const isCorrectPassword = await bcrypt.compare(sentPassword, user.password);
 
     if (!isCorrectPassword) {
-      res.status(VALIDATION_ERROR);
-      throw Error("Wrong password or username!");
+      res.status(UNAUTHORIZED);
+      throw Error("Wrong password or username");
     }
 
-    const accessToken = jwt.sign(
-      {
-        user: {
-          id: dbUser._id.toString(),
-          username: dbUser.username,
-          isSeller: dbUser.isSeller,
-          image: dbUser?.image,
-          country: dbUser.country,
-        },
-      },
-      SECRET_ACCESS_TOKEN,
-      { expiresIn: "2 days" }
-    );
+    const { password, ...rest } = user;
+    const userToSend = rest;
 
-    res.status(OK).json({ accessToken });
+    const token = generateJWT({
+      payload: {
+        id: userToSend._id,
+      },
+      expiresIn: "2 days",
+    });
+
+    if (!token) {
+      res.status(500);
+      throw Error("Could not generate access token");
+    }
+
+    const payloadToSend = {
+      success: true,
+      token,
+      user: userToSend,
+      message: "You have successfully logged in",
+    };
+
+    res.status(OK).json(payloadToSend);
   } catch (error) {
     next(error);
   }
@@ -115,13 +118,20 @@ export const signIn = async (req, res, next) => {
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
  * @route /api/auth/signout
- * @access public
+ * @access private
  */
-export const signOut = (req, res, next) => {
-  // Note: You can use Redis cache to
-  // store a blacklist of tokens
+export const signOut = async (req, res, next) => {
   try {
-    res.status(OK).json({ message: "Sign out successful!" });
+    const token = req.user.token;
+
+    await BlackList.create({
+      token,
+    });
+
+    return res.status(OK).json({
+      success: true,
+      message: "Log out successful",
+    });
   } catch (error) {
     next(error);
   }
