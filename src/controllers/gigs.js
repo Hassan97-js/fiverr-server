@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { decode } from "html-entities";
 
 import Gig from "../models/gig.js";
@@ -6,22 +7,26 @@ import { httpsCodes } from "../constants.js";
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get a user gigs
+ * @desc Get user private gigs
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
- * @route /api/gigs/my
+ * @route /api/gigs/private
  * @access private
  */
-export const getMyGigs = async (req, res, next) => {
+export const getPrivateGigs = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
 
-    const myGigs = await Gig.find({ userId })
+    const gigs = await Gig.find({ userId })
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
-    res.status(OK).json(myGigs);
+    res.status(OK).json({
+      gigs,
+      success: true,
+      message: null,
+    });
   } catch (error) {
     next(error);
   }
@@ -70,7 +75,11 @@ export const getGigs = async (req, res, next) => {
       })
       .lean();
 
-    res.status(OK).json(gigs);
+    res.status(OK).json({
+      success: true,
+      gigs,
+      message: null,
+    });
   } catch (error) {
     next(error);
   }
@@ -90,17 +99,22 @@ export const getGig = async (req, res, next) => {
 
     if (!gigId) {
       res.status(FORBIDDEN);
-      throw Error("Gig ID is required!");
+      throw Error("Gig ID is required");
     }
 
-    const dbGig = await Gig.findById(gigId);
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+      res.status(FORBIDDEN);
+      throw Error("Invalid Gig ID");
+    }
 
-    if (!dbGig) {
+    const gig = await Gig.findById(gigId);
+
+    if (!gig) {
       res.status(NOT_FOUND);
-      throw Error("Gig not found!");
+      throw Error("Gig not found");
     }
 
-    const foundGig = await dbGig.populate("userId", [
+    const foundGig = await gig.populate("userId", [
       "username",
       "email",
       "image",
@@ -108,7 +122,7 @@ export const getGig = async (req, res, next) => {
       "isSeller",
     ]);
 
-    res.status(OK).json(foundGig);
+    res.status(OK).json({ success: true, message: null, gig: foundGig });
   } catch (error) {
     next(error);
   }
@@ -128,14 +142,14 @@ export const createGig = async (req, res, next) => {
 
     if (!isSeller) {
       res.status(UNAUTHORIZED);
-      throw Error("Unauthorized!");
+      throw Error("Unauthorized");
     }
 
-    const dbGig = await Gig.findOne({ title: req.body.title }).lean();
+    const gig = await Gig.findOne({ title: req.body.title }).lean();
 
-    if (dbGig) {
+    if (gig) {
       res.status(FORBIDDEN);
-      throw Error("You have one gig with the same title!");
+      throw Error("You have one gig with the same title");
     }
 
     if (
@@ -150,7 +164,7 @@ export const createGig = async (req, res, next) => {
       !req.body.revisionNumber
     ) {
       res.status(FORBIDDEN);
-      throw Error("All fields are required!");
+      throw Error("All fields are required");
     }
 
     const newGig = await Gig.create({
@@ -178,21 +192,21 @@ export const deleteGig = async (req, res, next) => {
 
     if (!gigId) {
       res.status(FORBIDDEN);
-      throw Error("Gig ID is required!");
+      throw Error("Gig ID is required");
     }
 
     const dbGig = await Gig.findById(gigId).lean();
 
     if (!dbGig) {
       res.status(NOT_FOUND);
-      throw Error("Gig not found!");
+      throw Error("Gig not found");
     }
 
     const { id: loggedInUserId } = req.user;
 
     if (dbGig.userId.toString() !== loggedInUserId) {
       res.status(UNAUTHORIZED);
-      throw Error("Unauthorized!");
+      throw Error("Unauthorized");
     }
 
     await Gig.findByIdAndDelete(gigId);

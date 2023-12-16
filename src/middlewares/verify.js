@@ -36,7 +36,10 @@ export const verifyToken = async (req, res, next) => {
         throw Error("Invalid token");
       }
 
-      console.log(decoded);
+      if (!decoded.hasOwnProperty("username")) {
+        res.status(UNAUTHORIZED);
+        throw Error("Invalid token: missing username");
+      }
 
       req.user = decoded;
     });

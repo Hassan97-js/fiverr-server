@@ -3,7 +3,7 @@ import { query } from "express-validator";
 
 import {
   getGigs,
-  getMyGigs,
+  getPrivateGigs,
   getGig,
   createGig,
   deleteGig,
@@ -24,7 +24,7 @@ router.get(
   ]),
   getGigs
 );
-router.get("/my", verifyToken, getMyGigs);
+router.get("/private", verifyToken, getPrivateGigs);
 router.get("/single/:id", getGig);
 router.post("/single", verifyToken, createGig);
 router.delete("/single/:id", verifyToken, deleteGig);
