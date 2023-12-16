@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 
 import { httpsCodes } from "../constants.js";
 
-const { VALIDATION_ERROR } = httpsCodes;
+const { FORBIDDEN } = httpsCodes;
 
 export const validate = (validations) => {
   if (!validations || !Array.isArray(validations)) {
@@ -24,9 +24,16 @@ export const validate = (validations) => {
       const errorSource = validationErrors?.errors[0]?.path;
 
       if (!validationErrors.isEmpty()) {
-        console.log(`Express validator: Invalid value (${errorSource})`);
-        res.status(VALIDATION_ERROR);
-        throw Error(`Express validator: Invalid value (${errorSource})`);
+        const responseError = {};
+
+        validationErrors.array().map((error) => {
+          responseError[error.path] = error.msg;
+          responseError.value = error.value;
+
+          return responseError;
+        });
+
+        return res.status(FORBIDDEN).json({ error: responseError });
       }
 
       return next();

@@ -23,7 +23,7 @@ export const notFoundHandler = (req, res, next) => {
     const sliceStartIndex = fullURL.lastIndexOf("/") + 1;
     const notFoundRoute = fullURL.slice(sliceStartIndex);
 
-    const { NOT_FOUND } = constants.httpCodes;
+    const { NOT_FOUND } = httpsCodes;
 
     return res
       .status(NOT_FOUND)
@@ -79,5 +79,5 @@ export const errorHandler = (error, req, res, next) => {
 
   // logger.error(errorResponse?.message);
 
-  return res.json(middlewareError);
+  return res.json(errorResponse);
 };

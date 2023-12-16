@@ -13,7 +13,7 @@ router.post(
   validate([
     check("email").isEmail().normalizeEmail(),
     check("username").not().isEmpty().trim().escape(),
-    check("password").notEmpty().isLength({ min: 8 }),
+    check("password").notEmpty().isLength({ min: 4, max: 30 }),
   ]),
   signUp
 );

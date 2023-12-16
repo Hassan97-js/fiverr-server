@@ -2,7 +2,7 @@ import User from "../models/user.js";
 
 import { httpsCodes } from "../constants.js";
 
-const { OK, NOT_FOUND } = httpsCodes;
+const { OK, NOT_FOUND, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get a user
@@ -16,14 +16,26 @@ export const getUser = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
 
-    const dbUser = await User.findById(userId).lean();
+    const user = await User.findById(userId).lean();
 
-    if (!dbUser) {
+    if (!user) {
       res.status(NOT_FOUND);
-      throw Error("User does not exist!");
+      throw Error("User does not exist");
     }
 
-    return res.status(OK).json(req.user);
+    const userToSend = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      country: user.country,
+      isSeller: user.isSeller,
+    };
+
+    return res.status(OK).json({
+      user: userToSend,
+      success: true,
+      message: null,
+    });
   } catch (error) {
     next(error);
   }
@@ -41,26 +53,25 @@ export const deleteUser = async (req, res, next) => {
   try {
     const { id: paramsId } = req.params;
 
-    const { OK, NOT_FOUND, UNAUTHORIZED } = constants.httpCodes;
+    const user = await User.findById(paramsId).lean();
 
-    const dbUser = await User.findById(paramsId).lean();
-
-    if (!dbUser) {
+    if (!user) {
       res.status(NOT_FOUND);
-      throw Error("User not found!");
+      throw Error("User not found");
     }
 
     const { id: loggedInUserId } = req.user;
 
-    if (loggedInUserId !== dbUser._id.toString()) {
+    if (loggedInUserId !== user._id.toString()) {
       res.status(UNAUTHORIZED);
-      throw Error("Unauthorized!");
+      throw Error("Unauthorized");
     }
 
     await User.findByIdAndDelete(loggedInUserId);
 
     return res.status(OK).json({
-      message: "User deleted!",
+      success: true,
+      message: "User deleted",
     });
   } catch (error) {
     next(error);

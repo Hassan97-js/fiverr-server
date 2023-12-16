@@ -4,8 +4,9 @@ import BlackList from "../models/black-list.js";
 
 import { httpsCodes } from "../constants.js";
 import { SECRET_ACCESS_TOKEN } from "../config/index.js";
+import { getAccessToken } from "../utils/get-token.js";
 
-const { UNAUTHORIZED, FORBIDDEN, VALIDATION_ERROR } = httpsCodes;
+const { UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Verify user id via jwt token
@@ -15,14 +16,12 @@ const { UNAUTHORIZED, FORBIDDEN, VALIDATION_ERROR } = httpsCodes;
  */
 export const verifyToken = async (req, res, next) => {
   try {
-    const authHeader = req.headers.Authorization || req.headers.authorization;
+    const token = getAccessToken(req);
 
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
+    if (!token) {
       res.status(UNAUTHORIZED);
       throw Error("Invalid token");
     }
-
-    const token = authHeader.split(" ")[1];
 
     const isBlacklisted = !!(await BlackList.findOne({ token }));
 
@@ -37,8 +36,9 @@ export const verifyToken = async (req, res, next) => {
         throw Error("Invalid token");
       }
 
-      req.user = decoded.user;
-      req.user.token = token;
+      console.log(decoded);
+
+      req.user = decoded;
     });
 
     next();

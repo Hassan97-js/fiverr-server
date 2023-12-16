@@ -4,6 +4,8 @@ import BlackList from "../models/black-list.js";
 import User from "../models/user.js";
 
 import { generateJWT } from "../utils/jwt.js";
+import { getAccessToken } from "../utils/get-token.js";
+
 import { httpsCodes } from "../constants.js";
 
 const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
@@ -90,6 +92,9 @@ export const signIn = async (req, res, next) => {
     const token = generateJWT({
       payload: {
         id: userToSend._id,
+        username: userToSend.username,
+        email: userToSend.email,
+        isSeller: userToSend.isSeller,
       },
       expiresIn: "2 days",
     });
@@ -122,7 +127,12 @@ export const signIn = async (req, res, next) => {
  */
 export const signOut = async (req, res, next) => {
   try {
-    const token = req.user.token;
+    const token = getAccessToken(req);
+
+    if (!token) {
+      res.status(UNAUTHORIZED);
+      throw Error("Invalid token");
+    }
 
     await BlackList.create({
       token,
