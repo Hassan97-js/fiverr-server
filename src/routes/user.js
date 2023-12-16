@@ -1,11 +1,11 @@
 import express from "express";
 
-import { getUser, deleteUser } from "../controllers/index.js";
-import { verifyToken, verifyUserID } from "../middlewares/index.js";
+import { getUser, deleteUser } from "../controllers/user.js";
+import { verifyToken } from "../middlewares/verify.js";
 
 const router = express.Router();
 
-router.use("/:id", verifyUserID, verifyToken);
+router.use("/:id", verifyToken);
 
 router.get("/current", getUser);
 router.delete("/:id", deleteUser);

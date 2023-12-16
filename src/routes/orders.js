@@ -1,7 +1,7 @@
 import express from "express";
 
-import { verifyToken } from "../middlewares/index.js";
-import { confirmOrder, getOrders } from "../controllers/index.js";
+import { verifyToken } from "../middlewares/verify.js";
+import { confirmOrder, getOrders } from "../controllers/orders.js";
 
 const router = express.Router();
 

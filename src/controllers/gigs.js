@@ -1,9 +1,9 @@
 import { decode } from "html-entities";
 
-import { Gig } from "../models/index.js";
-import constants from "../constants.js";
+import Gig from "../models/gig.js";
+import { httpsCodes } from "../constants.js";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = constants.httpCodes;
+const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get a user gigs
@@ -56,8 +56,8 @@ export const getGigs = async (req, res, next) => {
         $text: {
           $search: `"${decode(search)}"`,
           $caseSensitive: false,
-          $diacriticSensitive: false
-        }
+          $diacriticSensitive: false,
+        },
       };
     }
 
@@ -66,7 +66,7 @@ export const getGigs = async (req, res, next) => {
     const gigs = await Gig.find(filterQuery)
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .sort({
-        [sortByKey]: -1
+        [sortByKey]: -1,
       })
       .lean();
 
@@ -105,7 +105,7 @@ export const getGig = async (req, res, next) => {
       "email",
       "image",
       "country",
-      "isSeller"
+      "isSeller",
     ]);
 
     res.status(OK).json(foundGig);
@@ -155,7 +155,7 @@ export const createGig = async (req, res, next) => {
 
     const newGig = await Gig.create({
       ...req.body,
-      userId
+      userId,
     });
 
     res.status(CREATED).json(newGig);

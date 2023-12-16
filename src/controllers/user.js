@@ -1,7 +1,8 @@
-import { User } from "../models/index.js";
-import constants from "../constants.js";
+import User from "../models/user.js";
 
-const { OK, NOT_FOUND } = constants.httpCodes;
+import { httpsCodes } from "../constants.js";
+
+const { OK, NOT_FOUND } = httpsCodes;
 
 /**
  * @desc Get a user
@@ -59,7 +60,7 @@ export const deleteUser = async (req, res, next) => {
     await User.findByIdAndDelete(loggedInUserId);
 
     return res.status(OK).json({
-      message: "User deleted!"
+      message: "User deleted!",
     });
   } catch (error) {
     next(error);

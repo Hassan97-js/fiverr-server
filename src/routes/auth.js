@@ -1,7 +1,7 @@
 import express from "express";
 import { check } from "express-validator";
 
-import { signIn, signOut, signUp } from "../controllers/auth";
+import { signIn, signOut, signUp } from "../controllers/auth.js";
 
 import { validate } from "../middlewares/validate.js";
 import { verifyToken } from "../middlewares/verify.js";

@@ -1,8 +1,12 @@
 import express from "express";
 
-import { getReviews, createReview, deleteReview } from "../controllers/index.js";
+import {
+  getReviews,
+  createReview,
+  deleteReview,
+} from "../controllers/reviews.js";
 
-import { verifyToken } from "../middlewares/index.js";
+import { verifyToken } from "../middlewares/verify.js";
 
 const router = express.Router();
 

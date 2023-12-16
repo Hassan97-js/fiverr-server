@@ -1,8 +1,9 @@
-import { Conversation, User } from "../models/index.js";
+import User from "../models/user.js";
+import Conversation from "../models/conversation.js";
 
-import constants from "../constants.js";
+import { httpsCodes } from "../constants.js";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED } = constants.httpCodes;
+const { OK, NOT_FOUND, FORBIDDEN, CREATED } = httpsCodes;
 
 /**
  * @desc Create a single converation
@@ -44,7 +45,7 @@ export const createConversation = async (req, res, next) => {
     }
 
     const dbConversation = await Conversation.findOne({
-      fetchId: isSeller ? userId + messageToId : messageToId + userId
+      fetchId: isSeller ? userId + messageToId : messageToId + userId,
     });
 
     if (dbConversation) {
@@ -56,7 +57,7 @@ export const createConversation = async (req, res, next) => {
       sellerId: isSeller ? userId : messageToId,
       buyerId: isSeller ? messageToId : userId,
       readBySeller: !!isSeller,
-      readByBuyer: !isSeller
+      readByBuyer: !isSeller,
     });
 
     return res.status(CREATED).json(newConversation);
@@ -78,13 +79,25 @@ export const getConversations = async (req, res, next) => {
     const { isSeller, id: userId } = req.user;
 
     const converations = await Conversation.find({
-      ...(isSeller ? { sellerId: userId } : { buyerId: userId })
+      ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
     })
       .sort({
-        updatedAt: -1
+        updatedAt: -1,
       })
-      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
-      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("sellerId", [
+        "username",
+        "email",
+        "image",
+        "country",
+        "isSeller",
+      ])
+      .populate("buyerId", [
+        "username",
+        "email",
+        "image",
+        "country",
+        "isSeller",
+      ])
       .lean();
 
     return res.status(OK).json(converations);
@@ -111,8 +124,20 @@ export const getConversation = async (req, res, next) => {
     }
 
     const conversation = await Conversation.findOne({ fetchId: conversationId })
-      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
-      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("sellerId", [
+        "username",
+        "email",
+        "image",
+        "country",
+        "isSeller",
+      ])
+      .populate("buyerId", [
+        "username",
+        "email",
+        "image",
+        "country",
+        "isSeller",
+      ])
       .lean();
 
     if (!conversation) {
@@ -148,8 +173,8 @@ export const updateConversation = async (req, res, next) => {
       {
         $set: {
           readBySeller: true,
-          readByBuyer: true
-        }
+          readByBuyer: true,
+        },
       },
       { new: true }
     ).lean();

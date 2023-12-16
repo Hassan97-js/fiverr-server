@@ -1,10 +1,12 @@
 import Stripe from "stripe";
 
-import { Order, Gig } from "../models/index.js";
-import { STRIPE_TEST_SECRECT_KEY } from "../config/index.js";
-import constants from "../constants.js";
+import Gig from "../models/gig.js";
+import Order from "../models/order.js";
 
-const { FORBIDDEN, NOT_FOUND, OK } = constants.httpCodes;
+import { STRIPE_TEST_SECRECT_KEY } from "../config/index.js";
+import { httpsCodes } from "../constants.js";
+
+const { FORBIDDEN, NOT_FOUND, OK } = httpsCodes;
 
 /**
  * @desc Create a payment intent

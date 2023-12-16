@@ -1,7 +1,8 @@
-import { Order } from "../models/index.js";
-import constants from "../constants.js";
+import Order from "../models/order.js";
 
-const { OK, FORBIDDEN } = constants.httpCodes;
+import { httpsCodes } from "../constants.js";
+
+const { OK, FORBIDDEN } = httpsCodes;
 
 /**
  * @desc Confirm an order
@@ -21,7 +22,7 @@ export const confirmOrder = async (req, res, next) => {
     }
 
     const order = await Order.findOne({
-      payment_intent: paymentIntent
+      payment_intent: paymentIntent,
     }).lean();
 
     if (!order) {
@@ -31,12 +32,12 @@ export const confirmOrder = async (req, res, next) => {
 
     await Order.findOneAndUpdate(
       {
-        payment_intent: paymentIntent
+        payment_intent: paymentIntent,
       },
       {
         $set: {
-          isCompleted: true
-        }
+          isCompleted: true,
+        },
       }
     );
 
@@ -57,12 +58,26 @@ export const confirmOrder = async (req, res, next) => {
 export const getOrders = async (req, res, next) => {
   try {
     const completedOrders = await Order.find({
-      ...(req.user.isSeller ? { sellerId: req.user.id } : { buyerId: req.user.id }),
-      isCompleted: true
+      ...(req.user.isSeller
+        ? { sellerId: req.user.id }
+        : { buyerId: req.user.id }),
+      isCompleted: true,
     })
       .populate("gigId", ["coverImage", "title", "price"])
-      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
-      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("sellerId", [
+        "username",
+        "email",
+        "image",
+        "country",
+        "isSeller",
+      ])
+      .populate("buyerId", [
+        "username",
+        "email",
+        "image",
+        "country",
+        "isSeller",
+      ])
       .lean();
 
     return res.status(OK).json(completedOrders);

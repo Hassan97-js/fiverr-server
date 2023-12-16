@@ -6,13 +6,13 @@ import {
   getMyGigs,
   getGig,
   createGig,
-  deleteGig
-} from "../controllers/index.js";
-import { verifyToken, verifyGigIDValidity, validate } from "../middlewares/index.js";
+  deleteGig,
+} from "../controllers/gigs.js";
+
+import { verifyToken } from "../middlewares/verify.js";
+import { validate } from "../middlewares/validate.js";
 
 const router = express.Router();
-
-router.use("/single/:id", verifyGigIDValidity);
 
 router.get(
   "/",
@@ -20,7 +20,7 @@ router.get(
     query("search").trim().toLowerCase().escape().optional(),
     query("min").trim().escape().optional(),
     query("max").trim().escape().optional(),
-    query("sort").trim().toLowerCase().escape().optional()
+    query("sort").trim().toLowerCase().escape().optional(),
   ]),
   getGigs
 );

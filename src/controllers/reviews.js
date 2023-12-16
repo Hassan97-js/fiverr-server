@@ -1,7 +1,9 @@
-import { Gig, Review } from "../models/index.js";
-import constants from "../constants.js";
+import Gig from "../models/gig.js";
+import Review from "../models/review.js";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = constants.httpCodes;
+import { httpsCodes } from "../constants.js";
+
+const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get all reviews
@@ -25,7 +27,7 @@ export const getReviews = async (req, res, next) => {
       "email",
       "image",
       "country",
-      "isSeller"
+      "isSeller",
     ]);
 
     return res.status(OK).json(reviews);
@@ -70,16 +72,16 @@ export const createReview = async (req, res, next) => {
       userId,
       gigId,
       description,
-      starNumber
+      starNumber,
     });
 
     await Gig.findOneAndUpdate(
       { gigId },
       {
-        $inc: { totalStars: 1, starNumber }
+        $inc: { totalStars: 1, starNumber },
       },
       {
-        new: true
+        new: true,
       }
     );
 
@@ -107,7 +109,10 @@ export const deleteReview = async (req, res, next) => {
       throw Error("Gig ID is required!");
     }
 
-    const dbReview = await Review.findOne({ gigId, userId: loggedInUserId }).lean();
+    const dbReview = await Review.findOne({
+      gigId,
+      userId: loggedInUserId,
+    }).lean();
 
     if (!dbReview) {
       res.status(NOT_FOUND);

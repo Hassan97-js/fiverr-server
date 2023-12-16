@@ -1,7 +1,9 @@
-import { Conversation, Message } from "../models/index.js";
-import constants from "../constants.js";
+import Conversation from "../models/conversation.js";
+import Message from "../models/message.js";
 
-const { OK, FORBIDDEN, CREATED } = constants.httpCodes;
+import { httpsCodes } from "../constants.js";
+
+const { OK, FORBIDDEN, CREATED } = httpsCodes;
 
 /**
  * @desc Create a single message
@@ -31,7 +33,7 @@ export const createMessage = async (req, res, next) => {
     const newMessage = await Message.create({
       conversationId,
       userId,
-      text
+      text,
     });
 
     await Conversation.findOneAndUpdate(
@@ -40,8 +42,8 @@ export const createMessage = async (req, res, next) => {
         $set: {
           readBySeller: isSeller,
           readByBuyer: !isSeller,
-          lastMessage: text
-        }
+          lastMessage: text,
+        },
       },
       { new: true }
     );
@@ -70,7 +72,7 @@ export const getMessages = async (req, res, next) => {
     }
 
     const messages = await Message.find({
-      conversationId
+      conversationId,
     })
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
