@@ -8,10 +8,6 @@ import { verifyToken } from "../middlewares/verify.js";
 
 const router = express.Router();
 
-/* 
-username
-password
-*/
 router.post(
   "/sign-up",
   validate([
