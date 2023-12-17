@@ -86,3 +86,12 @@ export const updateConversationValidator = [
     .trim()
     .escape(),
 ];
+
+export const getMessagesValidator = [
+  param("id")
+    .not()
+    .isEmpty()
+    .withMessage("Conversation ID is required")
+    .trim()
+    .escape(),
+];

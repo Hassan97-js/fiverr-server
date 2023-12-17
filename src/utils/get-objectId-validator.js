@@ -13,6 +13,7 @@ export const getObjectIdValidator = (id = "id") => {
   return [
     check(id)
       .custom((value) => mongoose.Types.ObjectId.isValid(value))
+      .trim()
       .withMessage("Invalid ID"),
   ];
 };

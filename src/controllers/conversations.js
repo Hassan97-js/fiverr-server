@@ -17,8 +17,15 @@ export const getConversations = async (req, res, next) => {
   try {
     const { isSeller, id: userId } = req.user;
 
+    // if (!conversation.fetchId.includes(user.id)) {
+    //   res.status(UNAUTHORIZED);
+    //   throw Error("Unauthorized");
+    // }
+
+    // TODO: Implement authorization logic to restrict it to only messages owners
     const converations = await Conversation.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
+      // fetchId: { $regex: `/${userId}/`, $options: "i" },
     })
       .sort({
         updatedAt: -1,
@@ -39,6 +46,12 @@ export const getConversations = async (req, res, next) => {
       ])
       .lean();
 
+    converations.filter((c) => {
+      if (c.fetchId.includes(userId)) {
+        return c;
+      }
+    });
+
     return res.status(OK).json({ success: true, converations, message: null });
   } catch (error) {
     next(error);
@@ -58,6 +71,7 @@ export const getConversation = async (req, res, next) => {
     const user = req.user;
     const { id: conversationId } = req.params;
 
+    // TODO: Implement authorization logic to restrict it to only messages owners
     const conversation = await Conversation.findOne({ fetchId: conversationId })
       .populate("sellerId", [
         "username",
@@ -107,6 +121,7 @@ export const updateConversation = async (req, res, next) => {
   try {
     const conversationId = req.body?.id;
 
+    // TODO: Implement authorization logic to restrict it to only messages owners
     const updatedConversation = await Conversation.findOneAndUpdate(
       { fetchId: conversationId },
       {
