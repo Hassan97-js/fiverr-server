@@ -1,7 +1,6 @@
 import User from "../models/user.js";
 import Conversation from "../models/conversation.js";
-
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED } = httpsCodes;
 

@@ -1,7 +1,7 @@
 import Gig from "../models/gig.js";
 import Review from "../models/review.js";
 
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 

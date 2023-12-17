@@ -4,7 +4,7 @@ import Gig from "../models/gig.js";
 import Order from "../models/order.js";
 
 import { STRIPE_TEST_SECRECT_KEY } from "../config/index.js";
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { FORBIDDEN, NOT_FOUND, OK } = httpsCodes;
 

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { decode } from "html-entities";
 
 import Gig from "../models/gig.js";
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
@@ -97,16 +97,6 @@ export const getGig = async (req, res, next) => {
   try {
     const { id: gigId } = req.params;
 
-    if (!gigId) {
-      res.status(FORBIDDEN);
-      throw Error("Gig ID is required");
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(gigId)) {
-      res.status(FORBIDDEN);
-      throw Error("Invalid Gig ID");
-    }
-
     const gig = await Gig.findById(gigId);
 
     if (!gig) {
@@ -138,33 +128,19 @@ export const getGig = async (req, res, next) => {
  */
 export const createGig = async (req, res, next) => {
   try {
-    const { id: userId, isSeller } = req.user;
+    const { title: gigTitle } = req.body;
+    const { id: userId, isSeller, username, email } = req.user;
 
     if (!isSeller) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized");
     }
 
-    const gig = await Gig.findOne({ title: req.body.title }).lean();
+    const gig = await Gig.findOne({ title: gigTitle }).lean();
 
     if (gig) {
       res.status(FORBIDDEN);
-      throw Error("You have one gig with the same title");
-    }
-
-    if (
-      !req.body.title ||
-      !req.body.description ||
-      !req.body.category ||
-      !req.body.price ||
-      !req.body.coverImage ||
-      !req.body.shortTitle ||
-      !req.body.shortDescription ||
-      !req.body.deliveryTime ||
-      !req.body.revisionNumber
-    ) {
-      res.status(FORBIDDEN);
-      throw Error("All fields are required");
+      throw Error("Gig title already exists");
     }
 
     const newGig = await Gig.create({
@@ -190,11 +166,6 @@ export const deleteGig = async (req, res, next) => {
   try {
     const { id: gigId } = req.params;
 
-    if (!gigId) {
-      res.status(FORBIDDEN);
-      throw Error("Gig ID is required");
-    }
-
     const dbGig = await Gig.findById(gigId).lean();
 
     if (!dbGig) {
@@ -211,7 +182,7 @@ export const deleteGig = async (req, res, next) => {
 
     await Gig.findByIdAndDelete(gigId);
 
-    res.status(OK).json({ message: "Gig has been deleted!" });
+    res.status(OK).json({ success: true, message: "Gig deleted" });
   } catch (error) {
     next(error);
   }

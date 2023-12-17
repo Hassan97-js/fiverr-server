@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { FORBIDDEN } = httpsCodes;
 

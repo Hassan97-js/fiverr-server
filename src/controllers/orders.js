@@ -1,6 +1,5 @@
 import Order from "../models/order.js";
-
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { OK, FORBIDDEN } = httpsCodes;
 

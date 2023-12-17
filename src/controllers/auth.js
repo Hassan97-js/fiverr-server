@@ -5,8 +5,7 @@ import User from "../models/user.js";
 
 import { generateJWT } from "../utils/jwt.js";
 import { getAccessToken } from "../utils/get-token.js";
-
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
@@ -20,12 +19,7 @@ const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
  */
 export const signUp = async (req, res, next) => {
   try {
-    const { username, email, password, country } = req.body;
-
-    if (!username || !email || !password || !country) {
-      res.status(VALIDATION_ERROR);
-      throw Error("All fields are required");
-    }
+    const { password } = req.body;
 
     const isUserExists = await User.exists({ username }).lean();
 
@@ -67,16 +61,11 @@ export const signIn = async (req, res, next) => {
   try {
     const { username, password: sentPassword } = req.body;
 
-    if (!username || !sentPassword) {
-      res.status(VALIDATION_ERROR);
-      throw Error("All fields are required");
-    }
-
     const user = await User.findOne({ username }).select("+password").lean();
 
     if (!user) {
       res.status(VALIDATION_ERROR);
-      throw Error("Wrong password or username!");
+      throw Error("Wrong password or username");
     }
 
     const isCorrectPassword = await bcrypt.compare(sentPassword, user.password);

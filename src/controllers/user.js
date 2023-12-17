@@ -1,6 +1,6 @@
 import User from "../models/user.js";
 
-import { httpsCodes } from "../constants.js";
+import { httpsCodes } from "../constants/http.js";
 
 const { OK, NOT_FOUND, UNAUTHORIZED } = httpsCodes;
 
