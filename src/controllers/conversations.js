@@ -1,69 +1,9 @@
 import User from "../models/user.js";
 import Conversation from "../models/conversation.js";
+
 import { httpsCodes } from "../constants/http.js";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED } = httpsCodes;
-
-/**
- * @desc Create a single converation
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
- * @route /api/conversations/single
- * @access private
- */
-export const createConversation = async (req, res, next) => {
-  try {
-    const { isSeller, id: userId } = req.user;
-    const messageToId = req.body?.messageToId;
-
-    if (!messageToId) {
-      res.status(FORBIDDEN);
-      throw Error("messageToId is required!");
-    }
-
-    if (messageToId === userId) {
-      res.status(FORBIDDEN);
-      throw Error("Forbidden!");
-    }
-
-    const dbUser = await User.findById(messageToId).lean();
-
-    if (isSeller && dbUser.isSeller) {
-      res.status(FORBIDDEN);
-      throw Error(
-        "Seller is not allowed to create a conversation with another seller!"
-      );
-    }
-
-    if (!isSeller && !dbUser.isSeller) {
-      res.status(FORBIDDEN);
-      throw Error(
-        "Buyer is not allowed to create a conversation with another buyer!"
-      );
-    }
-
-    const dbConversation = await Conversation.findOne({
-      fetchId: isSeller ? userId + messageToId : messageToId + userId,
-    });
-
-    if (dbConversation) {
-      return res.status(CREATED).json(dbConversation);
-    }
-
-    const newConversation = await Conversation.create({
-      fetchId: isSeller ? userId + messageToId : messageToId + userId,
-      sellerId: isSeller ? userId : messageToId,
-      buyerId: isSeller ? messageToId : userId,
-      readBySeller: !!isSeller,
-      readByBuyer: !isSeller,
-    });
-
-    return res.status(CREATED).json(newConversation);
-  } catch (error) {
-    next(error);
-  }
-};
+const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get all conversations
@@ -99,7 +39,7 @@ export const getConversations = async (req, res, next) => {
       ])
       .lean();
 
-    return res.status(OK).json(converations);
+    return res.status(OK).json({ success: true, converations, message: null });
   } catch (error) {
     next(error);
   }
@@ -115,12 +55,8 @@ export const getConversations = async (req, res, next) => {
  */
 export const getConversation = async (req, res, next) => {
   try {
-    const conversationId = req.params?.id;
-
-    if (!conversationId) {
-      res.status(FORBIDDEN);
-      throw Error("Conversation id is required!");
-    }
+    const user = req.user;
+    const { id: conversationId } = req.params;
 
     const conversation = await Conversation.findOne({ fetchId: conversationId })
       .populate("sellerId", [
@@ -141,10 +77,19 @@ export const getConversation = async (req, res, next) => {
 
     if (!conversation) {
       res.status(NOT_FOUND);
-      throw Error("Conversation not found!");
+      throw Error("Conversation not found");
     }
 
-    return res.status(OK).json(conversation);
+    if (!conversation.fetchId.includes(user.id)) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized");
+    }
+
+    return res.status(OK).json({
+      succcess: true,
+      conversation,
+      message: null,
+    });
   } catch (error) {
     next(error);
   }
@@ -162,11 +107,6 @@ export const updateConversation = async (req, res, next) => {
   try {
     const conversationId = req.body?.id;
 
-    if (!conversationId) {
-      res.status(FORBIDDEN);
-      throw Error("Conversation ID is required!");
-    }
-
     const updatedConversation = await Conversation.findOneAndUpdate(
       { fetchId: conversationId },
       {
@@ -180,10 +120,74 @@ export const updateConversation = async (req, res, next) => {
 
     if (!updatedConversation) {
       res.status(FORBIDDEN);
-      throw Error("Error updating conversation!");
+      throw Error("Error updating conversation");
     }
 
-    return res.status(OK).json(updatedConversation);
+    return res.status(OK).json({
+      success: true,
+      conversation: updatedConversation,
+      message: "Conversation updated",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc Create a single converation
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/conversations/single
+ * @access private
+ */
+export const createConversation = async (req, res, next) => {
+  try {
+    const { isSeller, id: userId } = req.user;
+    const messageToId = req.body.messageToId;
+
+    if (messageToId === userId) {
+      res.status(FORBIDDEN);
+      throw Error("Forbidden");
+    }
+
+    const user = await User.findById(messageToId).lean();
+
+    if (isSeller && user.isSeller) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "Seller is not allowed to create a conversation with another seller"
+      );
+    }
+
+    if (!isSeller && !user.isSeller) {
+      res.status(FORBIDDEN);
+      throw Error(
+        "Client is not allowed to create a conversation with another client"
+      );
+    }
+
+    const conversation = await Conversation.findOne({
+      fetchId: isSeller ? userId + messageToId : messageToId + userId,
+    });
+
+    if (conversation) {
+      return res
+        .status(CREATED)
+        .json({ succcess: true, conversation, message: null });
+    }
+
+    const newConversation = await Conversation.create({
+      fetchId: isSeller ? userId + messageToId : messageToId + userId,
+      sellerId: isSeller ? userId : messageToId,
+      buyerId: isSeller ? messageToId : userId,
+      readBySeller: !!isSeller,
+      readByBuyer: !isSeller,
+    });
+
+    return res
+      .status(CREATED)
+      .json({ succcess: true, conversation: newConversation, message: null });
   } catch (error) {
     next(error);
   }

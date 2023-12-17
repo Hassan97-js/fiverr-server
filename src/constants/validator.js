@@ -1,4 +1,5 @@
-import { body, check, query } from "express-validator";
+import mongoose from "mongoose";
+import { body, check, param, query } from "express-validator";
 
 import { getObjectIdValidator } from "../utils/get-objectId-validator.js";
 
@@ -61,3 +62,27 @@ export const signInValidation = [
 ];
 
 export const checkObjectIdValidator = getObjectIdValidator();
+
+export const getConversationValidator = [
+  param("id")
+    .not()
+    .isEmpty()
+    .withMessage("Conversation ID is required")
+    .trim()
+    .escape(),
+];
+
+export const createConversationValidator = [
+  body("messageToId")
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid ID"),
+];
+
+export const updateConversationValidator = [
+  body("id")
+    .not()
+    .isEmpty()
+    .withMessage("Conversation ID is required")
+    .trim()
+    .escape(),
+];
