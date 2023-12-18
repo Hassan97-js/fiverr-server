@@ -5,30 +5,30 @@ const conversationSchema = new Schema(
     fetchId: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     sellerId: {
       type: String,
       ref: "User",
-      required: true
+      required: true,
     },
     buyerId: {
       type: String,
       ref: "User",
-      required: true
+      required: true,
     },
     lastMessage: String,
     readBySeller: {
       type: Boolean,
-      required: true
+      required: true,
     },
     readByBuyer: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

@@ -6,7 +6,7 @@ import { httpsCodes } from "../constants/http.js";
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get all conversations
+ * @desc Get all private conversations
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
@@ -17,15 +17,9 @@ export const getConversations = async (req, res, next) => {
   try {
     const { isSeller, id: userId } = req.user;
 
-    // if (!conversation.fetchId.includes(user.id)) {
-    //   res.status(UNAUTHORIZED);
-    //   throw Error("Unauthorized");
-    // }
-
-    // TODO: Implement authorization logic to restrict it to only messages owners
     const converations = await Conversation.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
-      // fetchId: { $regex: `/${userId}/`, $options: "i" },
+      fetchId: { $regex: userId },
     })
       .sort({
         updatedAt: -1,
@@ -46,12 +40,6 @@ export const getConversations = async (req, res, next) => {
       ])
       .lean();
 
-    converations.filter((c) => {
-      if (c.fetchId.includes(userId)) {
-        return c;
-      }
-    });
-
     return res.status(OK).json({ success: true, converations, message: null });
   } catch (error) {
     next(error);
@@ -71,7 +59,11 @@ export const getConversation = async (req, res, next) => {
     const user = req.user;
     const { id: conversationId } = req.params;
 
-    // TODO: Implement authorization logic to restrict it to only messages owners
+    if (!conversationId.includes(user.id)) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized");
+    }
+
     const conversation = await Conversation.findOne({ fetchId: conversationId })
       .populate("sellerId", [
         "username",
@@ -94,11 +86,6 @@ export const getConversation = async (req, res, next) => {
       throw Error("Conversation not found");
     }
 
-    if (!conversation.fetchId.includes(user.id)) {
-      res.status(UNAUTHORIZED);
-      throw Error("Unauthorized");
-    }
-
     return res.status(OK).json({
       succcess: true,
       conversation,
@@ -119,9 +106,14 @@ export const getConversation = async (req, res, next) => {
  */
 export const updateConversation = async (req, res, next) => {
   try {
-    const conversationId = req.body?.id;
+    const user = req.user;
+    const conversationId = req.body.id;
 
-    // TODO: Implement authorization logic to restrict it to only messages owners
+    if (!conversationId.includes(user.id)) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized");
+    }
+
     const updatedConversation = await Conversation.findOneAndUpdate(
       { fetchId: conversationId },
       {
