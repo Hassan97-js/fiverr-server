@@ -19,36 +19,30 @@ const { FORBIDDEN, NOT_FOUND, OK } = httpsCodes;
 export const createPaymentIntent = async (req, res, next) => {
   try {
     const { id: userId, isSeller } = req.user;
+    const { gigId } = req.body;
 
     if (isSeller) {
       res.status(FORBIDDEN);
-      throw Error("Sellers are not allowed to make orders!");
+      throw Error("Sellers are not allowed to make orders");
     }
 
-    const gigId = req.body?.gigId;
+    const gig = await Gig.findById(gigId).lean();
 
-    if (!gigId) {
-      res.status(FORBIDDEN);
-      throw Error("Gig ID is required!");
-    }
-
-    const dbGig = await Gig.findById(gigId).lean();
-
-    if (!dbGig) {
+    if (!gig) {
       res.status(NOT_FOUND);
-      throw Error("Gig not found!");
+      throw Error("Gig not found");
     }
 
-    if (dbGig.userId === userId) {
+    if (gig.userId === userId) {
       res.status(FORBIDDEN);
-      throw Error("You are the owner of the gig!");
+      throw Error("You are the owner of the gig");
     }
 
     const stripe = new Stripe(STRIPE_TEST_SECRECT_KEY);
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: dbGig.price * 100,
+      amount: gig.price * 100,
       currency: "sek",
       automatic_payment_methods: {
         enabled: true,
@@ -59,11 +53,11 @@ export const createPaymentIntent = async (req, res, next) => {
 
     await Order.create({
       gigId,
-      image: dbGig.coverImage,
-      title: dbGig.title,
+      image: gig.coverImage,
+      title: gig.title,
       buyerId: req.user.id,
-      sellerId: dbGig.userId,
-      price: dbGig.price,
+      sellerId: gig.userId,
+      price: gig.price,
       payment_intent: paymentIntent.id,
     });
 

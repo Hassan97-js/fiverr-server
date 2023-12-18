@@ -1,50 +1,8 @@
 import Order from "../models/order.js";
+
 import { httpsCodes } from "../constants/http.js";
 
-const { OK, FORBIDDEN } = httpsCodes;
-
-/**
- * @desc Confirm an order
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
- * @route /api/orders/single
- * @access private
- */
-export const confirmOrder = async (req, res, next) => {
-  try {
-    const paymentIntent = req.body?.paymentIntent;
-
-    if (!paymentIntent) {
-      res.status(FORBIDDEN);
-      throw Error("Payment intent is required!");
-    }
-
-    const order = await Order.findOne({
-      payment_intent: paymentIntent,
-    }).lean();
-
-    if (!order) {
-      res.status(FORBIDDEN);
-      throw Error("Payment intent not valid!");
-    }
-
-    await Order.findOneAndUpdate(
-      {
-        payment_intent: paymentIntent,
-      },
-      {
-        $set: {
-          isCompleted: true,
-        },
-      }
-    );
-
-    return res.status(OK).json({ success: true });
-  } catch (error) {
-    next(error);
-  }
-};
+const { FORBIDDEN, OK, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get all orders
@@ -56,10 +14,10 @@ export const confirmOrder = async (req, res, next) => {
  */
 export const getOrders = async (req, res, next) => {
   try {
+    const { id: userId, isSeller } = req.user;
+
     const completedOrders = await Order.find({
-      ...(req.user.isSeller
-        ? { sellerId: req.user.id }
-        : { buyerId: req.user.id }),
+      ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
       isCompleted: true,
     })
       .populate("gigId", ["coverImage", "title", "price"])
@@ -79,7 +37,56 @@ export const getOrders = async (req, res, next) => {
       ])
       .lean();
 
-    return res.status(OK).json(completedOrders);
+    if (!completedOrders) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized");
+    }
+
+    return res.status(OK).json({ success: true, orders: completedOrders });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc Confirm an order
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @route /api/orders/single
+ * @access private
+ */
+export const confirmOrder = async (req, res, next) => {
+  try {
+    const { paymentIntent } = req.body;
+
+    const order = await Order.findOne({
+      payment_intent: paymentIntent,
+      isCompleted: true,
+    }).lean();
+
+    if (order) {
+      res.status(FORBIDDEN);
+      throw Error("Order is already completed");
+    }
+
+    if (!order) {
+      res.status(VALIDATION_ERROR);
+      throw Error("Payment intent is not valid");
+    }
+
+    await Order.findOneAndUpdate(
+      {
+        payment_intent: paymentIntent,
+      },
+      {
+        $set: {
+          isCompleted: true,
+        },
+      }
+    );
+
+    return res.status(OK).json({ success: true, message: "Order completed" });
   } catch (error) {
     next(error);
   }

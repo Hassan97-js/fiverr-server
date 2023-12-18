@@ -18,7 +18,6 @@ export const getMessages = async (req, res, next) => {
     const user = req.user;
     const conversationId = req.params.id;
 
-    // TODO: Implement authorization logic to restrict it to only messages owners
     if (!conversationId.includes(user.id)) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized");

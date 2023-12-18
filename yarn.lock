@@ -205,10 +205,9 @@ __metadata:
     express-mongo-sanitize: "npm:^2.2.0"
     express-validator: "npm:^7.0.1"
     html-entities: "npm:^2.4.0"
-    jsonwebtoken: "npm:^9.0.1"
-    mongodb: "npm:^5.8.0"
+    jsonwebtoken: "npm:^9.0.2"
     mongoose: "npm:^7.4.3"
-    nodemon: "npm:^3.0.1"
+    nodemon: "npm:^3.0.2"
     stripe: "npm:^13.6.0"
   languageName: unknown
   linkType: soft
@@ -1123,7 +1122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:^9.0.1":
+"jsonwebtoken@npm:^9.0.2":
   version: 9.0.2
   resolution: "jsonwebtoken@npm:9.0.2"
   dependencies:
@@ -1475,38 +1474,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:^5.8.0":
-  version: 5.9.2
-  resolution: "mongodb@npm:5.9.2"
-  dependencies:
-    "@mongodb-js/saslprep": "npm:^1.1.0"
-    bson: "npm:^5.5.0"
-    mongodb-connection-string-url: "npm:^2.6.0"
-    socks: "npm:^2.7.1"
-  peerDependencies:
-    "@aws-sdk/credential-providers": ^3.188.0
-    "@mongodb-js/zstd": ^1.0.0
-    kerberos: ^1.0.0 || ^2.0.0
-    mongodb-client-encryption: ">=2.3.0 <3"
-    snappy: ^7.2.2
-  dependenciesMeta:
-    "@mongodb-js/saslprep":
-      optional: true
-  peerDependenciesMeta:
-    "@aws-sdk/credential-providers":
-      optional: true
-    "@mongodb-js/zstd":
-      optional: true
-    kerberos:
-      optional: true
-    mongodb-client-encryption:
-      optional: true
-    snappy:
-      optional: true
-  checksum: c1bb3e0b390c74cd53ae2deedf6fb87d15f4bf11677f499b095c7fcd8d4692cd664a63b49b8b525330069faa0e689a76eda4b2a7a97bb7f26645d9310617b07f
-  languageName: node
-  linkType: hard
-
 "mongoose@npm:^7.4.3":
   version: 7.6.7
   resolution: "mongoose@npm:7.6.7"
@@ -1609,7 +1576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^3.0.1":
+"nodemon@npm:^3.0.2":
   version: 3.0.2
   resolution: "nodemon@npm:3.0.2"
   dependencies:

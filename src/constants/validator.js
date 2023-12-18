@@ -139,3 +139,21 @@ export const deleteReviewValidator = [
     .trim()
     .escape(),
 ];
+
+export const confirmOrderValidator = [
+  body("paymentIntent")
+    .not()
+    .isEmpty()
+    .withMessage("Payment intent is required")
+    .trim()
+    .escape(),
+];
+
+export const createPaymentIntentValidator = [
+  body("gigId")
+    .not()
+    .isEmpty()
+    .withMessage("Gig ID is required")
+    .trim()
+    .escape(),
+];
