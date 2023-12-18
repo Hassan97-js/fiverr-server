@@ -95,3 +95,13 @@ export const getMessagesValidator = [
     .trim()
     .escape(),
 ];
+
+export const createMessageValidator = [
+  body("conversationId")
+    .not()
+    .isEmpty()
+    .withMessage("Conversation ID is required")
+    .trim()
+    .escape(),
+  body("text").not().isEmpty().withMessage("Text is required").trim().escape(),
+];

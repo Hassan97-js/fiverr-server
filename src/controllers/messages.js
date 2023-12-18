@@ -3,7 +3,7 @@ import Message from "../models/message.js";
 
 import { httpsCodes } from "../constants/http.js";
 
-const { OK, FORBIDDEN, CREATED } = httpsCodes;
+const { OK, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get all messages
@@ -15,9 +15,14 @@ const { OK, FORBIDDEN, CREATED } = httpsCodes;
  */
 export const getMessages = async (req, res, next) => {
   try {
-    const conversationId = req.params?.id;
+    const user = req.user;
+    const conversationId = req.params.id;
 
     // TODO: Implement authorization logic to restrict it to only messages owners
+    if (!conversationId.includes(user.id)) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthorized");
+    }
 
     const messages = await Message.find({
       conversationId,
@@ -25,11 +30,15 @@ export const getMessages = async (req, res, next) => {
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
-    return res.status(OK).json(messages);
+    return res
+      .status(OK)
+      .json({ success: true, chatMessages: messages, message: null });
   } catch (error) {
     next(error);
   }
 };
+
+/* TODO: Continue with creating a message then get messages */
 
 /**
  * @desc Create a single message
@@ -42,19 +51,7 @@ export const getMessages = async (req, res, next) => {
 export const createMessage = async (req, res, next) => {
   try {
     const { id: userId, isSeller } = req.user;
-
-    const conversationId = req.body?.conversationId;
-    const text = req.body?.text;
-
-    if (!conversationId) {
-      res.status(FORBIDDEN);
-      throw Error("Converation id is required!");
-    }
-
-    if (!text) {
-      res.status(FORBIDDEN);
-      throw Error("Text is required!");
-    }
+    const { conversationId, text } = req.body;
 
     const newMessage = await Message.create({
       conversationId,
@@ -62,7 +59,12 @@ export const createMessage = async (req, res, next) => {
       text,
     });
 
-    await Conversation.findOneAndUpdate(
+    if (!newMessage) {
+      res.status(UNAUTHORIZED);
+      throw Error("Error creating a message");
+    }
+
+    const conversation = await Conversation.findOneAndUpdate(
       { fetchId: conversationId },
       {
         $set: {
@@ -74,7 +76,14 @@ export const createMessage = async (req, res, next) => {
       { new: true }
     );
 
-    return res.status(CREATED).json(newMessage);
+    if (!conversation) {
+      res.status(UNAUTHORIZED);
+      throw Error("Error updating a conversation");
+    }
+
+    return res
+      .status(CREATED)
+      .json({ success: true, chatMessage: newMessage, message: null });
   } catch (error) {
     next(error);
   }
