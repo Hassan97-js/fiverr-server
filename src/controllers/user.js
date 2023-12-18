@@ -34,7 +34,6 @@ export const getUser = async (req, res, next) => {
     return res.status(OK).json({
       user: userToSend,
       success: true,
-      message: null,
     });
   } catch (error) {
     next(error);

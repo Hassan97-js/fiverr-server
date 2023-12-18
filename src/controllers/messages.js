@@ -30,9 +30,7 @@ export const getMessages = async (req, res, next) => {
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
-    return res
-      .status(OK)
-      .json({ success: true, chatMessages: messages, message: null });
+    return res.status(OK).json({ success: true, chatMessages: messages });
   } catch (error) {
     next(error);
   }
@@ -81,9 +79,7 @@ export const createMessage = async (req, res, next) => {
       throw Error("Error updating a conversation");
     }
 
-    return res
-      .status(CREATED)
-      .json({ success: true, chatMessage: newMessage, message: null });
+    return res.status(CREATED).json({ success: true, chatMessage: newMessage });
   } catch (error) {
     next(error);
   }

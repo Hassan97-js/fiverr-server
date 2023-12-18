@@ -40,7 +40,7 @@ export const getConversations = async (req, res, next) => {
       ])
       .lean();
 
-    return res.status(OK).json({ success: true, converations, message: null });
+    return res.status(OK).json({ success: true, converations });
   } catch (error) {
     next(error);
   }
@@ -89,7 +89,6 @@ export const getConversation = async (req, res, next) => {
     return res.status(OK).json({
       succcess: true,
       conversation,
-      message: null,
     });
   } catch (error) {
     next(error);
@@ -179,9 +178,7 @@ export const createConversation = async (req, res, next) => {
     });
 
     if (conversation) {
-      return res
-        .status(CREATED)
-        .json({ succcess: true, conversation, message: null });
+      return res.status(CREATED).json({ succcess: true, conversation });
     }
 
     const newConversation = await Conversation.create({
@@ -194,7 +191,7 @@ export const createConversation = async (req, res, next) => {
 
     return res
       .status(CREATED)
-      .json({ succcess: true, conversation: newConversation, message: null });
+      .json({ succcess: true, conversation: newConversation });
   } catch (error) {
     next(error);
   }

@@ -25,7 +25,6 @@ export const getPrivateGigs = async (req, res, next) => {
     res.status(OK).json({
       gigs,
       success: true,
-      message: null,
     });
   } catch (error) {
     next(error);
@@ -78,7 +77,6 @@ export const getGigs = async (req, res, next) => {
     res.status(OK).json({
       success: true,
       gigs,
-      message: null,
     });
   } catch (error) {
     next(error);
@@ -112,7 +110,7 @@ export const getGig = async (req, res, next) => {
       "isSeller",
     ]);
 
-    res.status(OK).json({ success: true, message: null, gig: foundGig });
+    res.status(OK).json({ success: true, gig: foundGig });
   } catch (error) {
     next(error);
   }

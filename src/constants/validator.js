@@ -105,3 +105,37 @@ export const createMessageValidator = [
     .escape(),
   body("text").not().isEmpty().withMessage("Text is required").trim().escape(),
 ];
+
+export const getReviewsValidator = [
+  param("gigId")
+    .not()
+    .isEmpty()
+    .withMessage("Gig ID is required")
+    .trim()
+    .escape(),
+];
+
+export const createReviewValidator = [
+  body("gigId")
+    .not()
+    .isEmpty()
+    .withMessage("Gig ID is required")
+    .trim()
+    .escape(),
+  body("description")
+    .not()
+    .isEmpty()
+    .withMessage("Description is required")
+    .trim()
+    .escape(),
+  body("starNumber").isNumeric().withMessage("Star number must be a number"),
+];
+
+export const deleteReviewValidator = [
+  param("gigId")
+    .not()
+    .isEmpty()
+    .withMessage("Gig ID is required")
+    .trim()
+    .escape(),
+];
