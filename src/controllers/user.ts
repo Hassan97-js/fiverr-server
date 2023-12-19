@@ -1,18 +1,20 @@
 import User from "../models/user";
 
 import { httpsCodes } from "../constants/http";
+import { type NextFunction, type Request, type Response } from "express";
 
 const { OK, NOT_FOUND, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Get a user
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/user/current
  * @access private
  */
-export const getUser = async (req, res, next) => {
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: userId } = req.user;
 

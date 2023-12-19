@@ -1,20 +1,25 @@
+import { Request } from "express";
+
 /**
- * @desc Gets an access token from headers
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
+ * Gets an access token from request header
  */
-export const getAccessToken = (req) => {
+export const getAccessToken = (req: Request) => {
   try {
     const authHeader = req.headers.Authorization || req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
+    if (
+      !authHeader ||
+      (typeof authHeader === "string" && !authHeader?.startsWith("Bearer"))
+    ) {
       return null;
     }
 
-    const token = authHeader.split(" ")[1];
+    if (typeof authHeader === "string") {
+      const token = authHeader.split(" ")[1];
+      return token;
+    }
 
-    return token;
+    return null;
   } catch (error) {
     return null;
   }

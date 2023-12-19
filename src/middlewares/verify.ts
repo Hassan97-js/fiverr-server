@@ -1,20 +1,23 @@
 import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
 
 import BlackList from "../models/black-list";
 
 import { SECRET_ACCESS_TOKEN } from "../config/index";
 import { getAccessToken } from "../utils/get-token";
 import { httpsCodes } from "../constants/http";
+import type { TJwtUser, TUser } from "../types/user";
 
 const { UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Verify user id via jwt token
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
+ * Verify user id with jwt token
  */
-export const verifyToken = async (req, res, next) => {
+export const verifyToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = getAccessToken(req);
 
@@ -30,18 +33,31 @@ export const verifyToken = async (req, res, next) => {
       throw Error("You are not authorized [BlackListed]");
     }
 
-    jwt.verify(token, SECRET_ACCESS_TOKEN, (error, decoded) => {
+    jwt.verify(token, SECRET_ACCESS_TOKEN!, (error, decoded) => {
       if (error) {
         res.status(UNAUTHORIZED);
         throw Error("Invalid token");
       }
 
-      if (!decoded.hasOwnProperty("username")) {
+      console.log(typeof decoded);
+
+      if (!decoded || typeof decoded !== "object" || !("username" in decoded)) {
         res.status(UNAUTHORIZED);
         throw Error("Invalid token");
       }
 
-      req.user = decoded;
+      if (typeof decoded === "string") {
+        const parsedUser = JSON.parse(decoded) as TJwtUser;
+
+        const currentUser = {
+          id: parsedUser?.id,
+          username: parsedUser?.username,
+          email: parsedUser?.email,
+          isSeller: parsedUser?.isSeller,
+        };
+
+        req.user = currentUser;
+      }
     });
 
     next();
