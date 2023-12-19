@@ -5,8 +5,8 @@
   "type": "module",
   "main": "./src/server.ts",
   "scripts": {
-    "start": "ts-node server.ts",
-    "dev": "ts-node server.ts"
+    "start": "ts-node ./src/server.ts",
+    "dev": "ts-node ./src/server.ts"
   },
   "keywords": [],
   "author": "",
