@@ -1,4 +1,5 @@
 import express from "express";
+import { format, transports } from "winston";
 import cors from "cors";
 import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
@@ -15,7 +16,17 @@ import paymentRouter from "./routes/payment.js";
 
 import { errorHandler, notFoundHandler } from "./middlewares/catch-error.js";
 
+import { logger } from "./constants/logger.js";
+
 const app = express();
+
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.combine(format.colorize(), format.simple()),
+    })
+  );
+}
 
 app.use(
   cors({

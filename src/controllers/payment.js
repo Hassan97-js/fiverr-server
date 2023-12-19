@@ -4,7 +4,9 @@ import Gig from "../models/gig.js";
 import Order from "../models/order.js";
 
 import { STRIPE_TEST_SECRECT_KEY } from "../config/index.js";
+
 import { httpsCodes } from "../constants/http.js";
+import { logger } from "../constants/logger.js";
 
 const { FORBIDDEN, NOT_FOUND, OK } = httpsCodes;
 
@@ -65,21 +67,20 @@ export const createPaymentIntent = async (req, res, next) => {
   } catch (error) {
     switch (error.type) {
       case "StripeCardError": {
-        console.log(`A payment error occurred: ${e.message}`);
-        console.log(error.message);
+        logger.error(`A payment error occurred: ${error.message}`);
         next(error);
         break;
       }
       case "StripeInvalidRequestError": {
-        console.log("An invalid request occurred.");
-        console.log(error.message);
+        logger.error(`An invalid request occurred: ${error.message}`);
         next(error);
         break;
       }
 
       default: {
-        console.log("Another problem occurred, maybe unrelated to Stripe.");
-        console.log(error.message);
+        logger.error(
+          `Another problem occurred, maybe unrelated to Stripe: ${error.message}`
+        );
         next(error);
       }
     }

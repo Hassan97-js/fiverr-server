@@ -1,9 +1,10 @@
 import app from "./app.js";
 
 import { connectToDB } from "./utils/db.js";
-import { BASE_URL, PORT } from "./config/index.js";
+import { PORT } from "./config/index.js";
+import { logger } from "./constants/logger.js";
 
 app.listen(PORT, () => {
   connectToDB();
-  console.log(`[server]: Running on ${BASE_URL}`);
+  logger.info(`[Server] Running on http://localhost:${PORT}`);
 });

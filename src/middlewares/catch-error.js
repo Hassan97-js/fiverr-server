@@ -1,4 +1,5 @@
 import { httpsCodes } from "../constants/http.js";
+import { logger } from "../constants/logger.js";
 
 const {
   VALIDATION_ERROR,
@@ -24,6 +25,8 @@ export const notFoundHandler = (req, res, next) => {
     const notFoundRoute = fullURL.slice(sliceStartIndex);
 
     const { NOT_FOUND } = httpsCodes;
+
+    logger.error(`"${notFoundRoute}" page not found.`);
 
     return res
       .status(NOT_FOUND)
@@ -77,7 +80,7 @@ export const errorHandler = (error, req, res, next) => {
       break;
   }
 
-  // logger.error(errorResponse?.message);
+  logger.error(error?.message);
 
   return res.json(errorResponse);
 };

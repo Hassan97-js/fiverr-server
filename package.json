@@ -21,7 +21,8 @@
     "html-entities": "^2.4.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.4.3",
-    "stripe": "^13.6.0"
+    "stripe": "^13.6.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
