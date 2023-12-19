@@ -1,5 +1,6 @@
 import Gig from "../models/gig.js";
 import Review from "../models/review.js";
+import Order from "../models/order.js";
 
 import { httpsCodes } from "../constants/http.js";
 
@@ -56,7 +57,16 @@ export const createReview = async (req, res, next) => {
       throw Error("Reivew already created");
     }
 
-    // TODO: Check if the user purchased the gig - Use Order Model
+    const order = await Order.findOne({
+      buyerId: userId,
+      gigId,
+      isCompleted: true,
+    });
+
+    if (!order) {
+      res.status(UNAUTHORIZED);
+      throw Error("User has not purchased the gig");
+    }
 
     const newReview = await Review.create({
       userId,
