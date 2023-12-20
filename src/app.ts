@@ -1,4 +1,5 @@
 import express from "express";
+import helmet from "helmet";
 import { format, transports } from "winston";
 import cors from "cors";
 import mongosanitize from "express-mongo-sanitize";
@@ -23,15 +24,16 @@ const app = express();
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new transports.Console({
-      format: format.combine(format.colorize(), format.simple()),
+      format: format.combine(format.colorize(), format.simple())
     })
   );
 }
 
+app.use(helmet());
 app.use(
   cors({
     origin: true,
-    credentials: true,
+    credentials: true
   })
 );
 

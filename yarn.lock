@@ -446,6 +446,7 @@ __metadata:
     express: "npm:^4.18.2"
     express-mongo-sanitize: "npm:^2.2.0"
     express-validator: "npm:^7.0.1"
+    helmet: "npm:^7.1.0"
     html-entities: "npm:^2.4.0"
     jsonwebtoken: "npm:^9.0.2"
     mongoose: "npm:^7.4.3"
@@ -1260,6 +1261,13 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: 5d415b114f410661208c95e7ab4879f1cc2765b8daceff4dc8718317d1cb7b9ffa7c5d1eafd9a4389c9aab7445d6ea88e05f3096cb1e529618b55304956b87fc
+  languageName: node
+  linkType: hard
+
+"helmet@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "helmet@npm:7.1.0"
+  checksum: 8c3370d07487be11ac918577c68952e05d779a1a2c037023c1ba763034c381a025899bc52f8acfab5209304a1dc618a3764dbfd26386a0d1173befe4fb932e84
   languageName: node
   linkType: hard
 
