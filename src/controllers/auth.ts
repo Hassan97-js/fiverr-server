@@ -12,7 +12,6 @@ import { httpsCodes } from "../constants/http";
 const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Sign up user and save in DB
  * @route /api/auth/sign-up
  * @access public
  */
@@ -59,7 +58,6 @@ export const signUp = async (
 };
 
 /**
- * @desc Sign in user with jwt
  * @route /api/auth/sign-in
  * @access public
  */
@@ -123,7 +121,6 @@ export const signIn = async (
 };
 
 /**
- * @desc Sign out user
  * @route /api/auth/sign-out
  * @access private
  */

@@ -1,11 +1,10 @@
-import { type JwtPayload } from "jsonwebtoken";
-import { Types } from "mongoose";
+import { type JwtPayload as TJwtPayload } from "jsonwebtoken";
 
 export type TUser = {
-  id: Types.ObjectId;
+  id: string;
   username: string;
   email: string;
   isSeller: string;
 };
 
-export type TJwtUser = TUser & JwtPayload;
+export type TJwtUser = TUser & TJwtPayload;

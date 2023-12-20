@@ -9,13 +9,12 @@ import { checkObjectIdValidator } from "../constants/validator";
 
 const router = express.Router();
 
-// router.get("/current", verifyToken, getUser);
-router.get("/current", verifyToken);
-// router.delete(
-//   "/:id",
-//   verifyToken,
-//   validate(checkObjectIdValidator),
-//   deleteUser
-// );
+router.get("/current", verifyToken, getUser);
+router.delete(
+  "/:id",
+  verifyToken,
+  validate(checkObjectIdValidator),
+  deleteUser
+);
 
 export default router;

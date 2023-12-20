@@ -6,7 +6,6 @@ import { type NextFunction, type Request, type Response } from "express";
 const { OK, NOT_FOUND, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get a user
  * @route /api/user/current
  * @access private
  */
@@ -49,25 +48,24 @@ export const getUser = async (
 };
 
 /**
- * @desc Delete a user
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/user/:id
  * @access private
  */
-export const deleteUser = async (req, res, next) => {
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { id: paramsId } = req.params;
+    const { id: userIdToDelete } = req.params;
+    const { id: loggedInUserId } = req.user;
 
-    const user = await User.findById(paramsId).lean();
+    const user = await User.findById(userIdToDelete).lean();
 
     if (!user) {
       res.status(NOT_FOUND);
       throw Error("User not found");
     }
-
-    const { id: loggedInUserId } = req.user;
 
     if (loggedInUserId !== user._id.toString()) {
       res.status(UNAUTHORIZED);
