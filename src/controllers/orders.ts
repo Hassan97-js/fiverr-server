@@ -1,3 +1,5 @@
+import { type Request, type Response, type NextFunction } from "express";
+
 import Order from "../models/order";
 
 import { httpsCodes } from "../constants/http";
@@ -5,14 +7,14 @@ import { httpsCodes } from "../constants/http";
 const { FORBIDDEN, OK, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get all orders
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/orders
  * @access private
  */
-export const getOrders = async (req, res, next) => {
+export const getOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: userId, isSeller } = req.user;
 
@@ -55,14 +57,14 @@ export const getOrders = async (req, res, next) => {
 };
 
 /**
- * @desc Confirm an order
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/orders/single
  * @access private
  */
-export const confirmOrder = async (req, res, next) => {
+export const confirmOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { paymentIntent } = req.body;
 

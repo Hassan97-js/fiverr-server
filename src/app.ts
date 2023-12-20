@@ -11,7 +11,7 @@ import gigsRouter from "./routes/gigs";
 import reviewsRouter from "./routes/reviews";
 import conversationsRouter from "./routes/conversations";
 import messagesRouter from "./routes/messages";
-// import ordersRouter from "./routes/orders";
+import ordersRouter from "./routes/orders";
 // import paymentRouter from "./routes/payment";
 
 import { errorHandler, notFoundHandler } from "./middlewares/catch-error";
@@ -44,7 +44,7 @@ app.use("/api/gigs", gigsRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/conversations", conversationsRouter);
 app.use("/api/messages", messagesRouter);
-// app.use("/api/orders", ordersRouter);
+app.use("/api/orders", ordersRouter);
 // app.use("/api/payment", paymentRouter);
 
 app.use(notFoundHandler);
