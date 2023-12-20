@@ -1,3 +1,5 @@
+import { type Request, type Response, type NextFunction } from "express";
+
 import Gig from "../models/gig";
 import Review from "../models/review";
 import Order from "../models/order";
@@ -7,14 +9,14 @@ import { httpsCodes } from "../constants/http";
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get all reviews
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/reviews/:gigId
  * @access public
  */
-export const getReviews = async (req, res, next) => {
+export const getReviews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { gigId } = req.params;
 
@@ -39,14 +41,14 @@ export const getReviews = async (req, res, next) => {
 };
 
 /**
- * @desc Create a review
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/reviews/single
  * @access private
  */
-export const createReview = async (req, res, next) => {
+export const createReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: userId, isSeller } = req.user;
     const { gigId, description, starNumber } = req.body;
@@ -114,14 +116,14 @@ export const createReview = async (req, res, next) => {
 };
 
 /**
- * @desc Delete a review
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/reviews/single/:gigId
  * @access private
  */
-export const deleteReview = async (req, res, next) => {
+export const deleteReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: loggedInUserId } = req.user;
     const { gigId } = req.params;
