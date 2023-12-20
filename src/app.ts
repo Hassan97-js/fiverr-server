@@ -7,11 +7,11 @@ config();
 
 import authRouter from "./routes/auth";
 import userRouter from "./routes/user";
+import gigsRouter from "./routes/gigs";
+// import reviewsRouter from "./routes/reviews";
 // import conversationsRouter from "./routes/conversations";
-// import gigsRouter from "./routes/gigs";
 // import messagesRouter from "./routes/messages";
 // import ordersRouter from "./routes/orders";
-// import reviewsRouter from "./routes/reviews";
 // import paymentRouter from "./routes/payment";
 
 import { errorHandler, notFoundHandler } from "./middlewares/catch-error";
@@ -40,11 +40,11 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-// app.use("/api/gigs", gigsRouter);
+app.use("/api/gigs", gigsRouter);
 // app.use("/api/reviews", reviewsRouter);
-// app.use("/api/orders", ordersRouter);
 // app.use("/api/conversations", conversationsRouter);
 // app.use("/api/messages", messagesRouter);
+// app.use("/api/orders", ordersRouter);
 // app.use("/api/payment", paymentRouter);
 
 app.use(notFoundHandler);

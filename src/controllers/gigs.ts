@@ -1,20 +1,22 @@
-import mongoose from "mongoose";
+import { Request, Response, NextFunction } from "express";
 import { decode } from "html-entities";
 
 import Gig from "../models/gig";
 import { httpsCodes } from "../constants/http";
 
+import type { TGigsFilterQuery } from "../types/gigs";
+
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get user private gigs
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/gigs/private
  * @access private
  */
-export const getPrivateGigs = async (req, res, next) => {
+export const getPrivateGigs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: userId } = req.user;
 
@@ -38,29 +40,32 @@ export const getPrivateGigs = async (req, res, next) => {
 };
 
 /**
- * @desc Get all gigs
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/gigs
  * @access public
  */
-export const getGigs = async (req, res, next) => {
+export const getGigs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { sort: sortBy, search, min, max } = req.query;
 
-    let filterQuery = {};
+    let filterQuery: TGigsFilterQuery = {};
 
-    if (min || max) {
-      min && (filterQuery.price = { $gte: parseInt(min) });
-      max && (filterQuery.price = { $lte: parseInt(max) });
+    if (typeof min === "string" && min) {
+      filterQuery.price = { $gte: min };
     }
 
-    if (min && max) {
-      filterQuery.price = { $gte: parseInt(min), $lte: parseInt(max) };
+    if (typeof max === "string" && max) {
+      filterQuery.price = { $gte: max };
     }
 
-    if (search) {
+    if (typeof min === "string" && typeof max === "string" && min && max) {
+      filterQuery.price = { $gte: min, $lte: max };
+    }
+
+    if (typeof search === "string" && search) {
       filterQuery = {
         ...filterQuery,
         $text: {
@@ -71,7 +76,7 @@ export const getGigs = async (req, res, next) => {
       };
     }
 
-    const sortByKey = sortBy || "createdAt";
+    const sortByKey = String(sortBy) || "createdAt";
 
     const gigs = await Gig.find(filterQuery)
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
@@ -96,14 +101,14 @@ export const getGigs = async (req, res, next) => {
 };
 
 /**
- * @desc Get a single gig
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/gigs/single/:id
  * @access public
  */
-export const getGig = async (req, res, next) => {
+export const getGig = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: gigId } = req.params;
 
@@ -135,14 +140,14 @@ export const getGig = async (req, res, next) => {
 };
 
 /**
- *  @desc Create a new gig
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/gigs/single
  * @access private
  */
-export const createGig = async (req, res, next) => {
+export const createGig = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { title: gigTitle } = req.body;
     const { id: userId, isSeller, username, email } = req.user;
@@ -177,14 +182,14 @@ export const createGig = async (req, res, next) => {
 };
 
 /**
- * @desc Delete a gig
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/gigs/single/:id
  * @access private
  */
-export const deleteGig = async (req, res, next) => {
+export const deleteGig = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: gigId } = req.params;
 

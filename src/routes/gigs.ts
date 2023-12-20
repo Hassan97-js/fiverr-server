@@ -19,8 +19,8 @@ import {
 
 const router = express.Router();
 
-router.get("/", validate(getPublicGigsValidation), getGigs);
 router.get("/private", verifyToken, getPrivateGigs);
+router.get("/", validate(getPublicGigsValidation), getGigs);
 router.get("/single/:id", validate(checkObjectIdValidator), getGig);
 router.post("/single", verifyToken, validate(createGigValidation), createGig);
 router.delete(
