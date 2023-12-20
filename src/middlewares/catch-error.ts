@@ -35,7 +35,13 @@ export const notFoundHandler = (
     res.status(NOT_FOUND);
     next(error);
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 

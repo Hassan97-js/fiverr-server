@@ -28,7 +28,13 @@ export const getReviews = async (req, res, next) => {
 
     return res.status(OK).json({ success: true, reviews });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -97,7 +103,13 @@ export const createReview = async (req, res, next) => {
 
     return res.status(CREATED).json({ success: true, review: newReview });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -141,6 +153,12 @@ export const deleteReview = async (req, res, next) => {
 
     res.status(OK).json({ success: true });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };

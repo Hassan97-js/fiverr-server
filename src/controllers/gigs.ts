@@ -27,7 +27,13 @@ export const getPrivateGigs = async (req, res, next) => {
       success: true,
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -79,7 +85,13 @@ export const getGigs = async (req, res, next) => {
       gigs,
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -112,7 +124,13 @@ export const getGig = async (req, res, next) => {
 
     res.status(OK).json({ success: true, gig: foundGig });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -148,7 +166,13 @@ export const createGig = async (req, res, next) => {
 
     res.status(CREATED).json(newGig);
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -182,6 +206,12 @@ export const deleteGig = async (req, res, next) => {
 
     res.status(OK).json({ success: true, message: "Gig deleted" });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };

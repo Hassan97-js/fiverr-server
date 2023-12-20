@@ -42,7 +42,13 @@ export const getConversations = async (req, res, next) => {
 
     return res.status(OK).json({ success: true, converations });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -91,7 +97,13 @@ export const getConversation = async (req, res, next) => {
       conversation,
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -135,7 +147,13 @@ export const updateConversation = async (req, res, next) => {
       message: "Conversation updated",
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -193,6 +211,12 @@ export const createConversation = async (req, res, next) => {
       .status(CREATED)
       .json({ succcess: true, conversation: newConversation });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };

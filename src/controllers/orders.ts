@@ -44,7 +44,13 @@ export const getOrders = async (req, res, next) => {
 
     return res.status(OK).json({ success: true, orders: completedOrders });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -88,6 +94,12 @@ export const confirmOrder = async (req, res, next) => {
 
     return res.status(OK).json({ success: true, message: "Order completed" });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };

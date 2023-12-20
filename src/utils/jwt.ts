@@ -12,6 +12,6 @@ export const generateJWT = ({ payload = {}, expiresIn = "20m" }) => {
       expiresIn,
     });
   } catch (error) {
-    throw Error(error);
+    return null;
   }
 };

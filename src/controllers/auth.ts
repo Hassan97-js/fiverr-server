@@ -1,3 +1,4 @@
+import { type Request, type Response, type NextFunction } from "express";
 import bcrypt from "bcrypt";
 
 import BlackList from "../models/black-list";
@@ -11,15 +12,16 @@ const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Sign up user and save in DB
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/auth/signup
  * @access public
  */
-export const signUp = async (req, res, next) => {
+export const signUp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { password } = req.body;
+    const { username, password } = req.body;
 
     const isUserExists = await User.exists({ username }).lean();
 
@@ -45,19 +47,26 @@ export const signUp = async (req, res, next) => {
       image: newUser.image ?? "",
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
 /**
  * @desc Sign in user with jwt
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/auth/signin
  * @access public
  */
-export const signIn = async (req, res, next) => {
+export const signIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { username, password: sentPassword } = req.body;
 
@@ -102,19 +111,26 @@ export const signIn = async (req, res, next) => {
 
     res.status(OK).json(payloadToSend);
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
 /**
  * @desc Sign out user
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/auth/signout
  * @access private
  */
-export const signOut = async (req, res, next) => {
+export const signOut = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = getAccessToken(req);
 
@@ -132,6 +148,12 @@ export const signOut = async (req, res, next) => {
       message: "Log out successful",
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };

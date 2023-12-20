@@ -38,7 +38,13 @@ export const getUser = async (
       success: true,
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };
 
@@ -75,6 +81,12 @@ export const deleteUser = async (req, res, next) => {
       message: "User deleted",
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(error);
+    }
+
+    if (error instanceof String) {
+      next(error);
+    }
   }
 };

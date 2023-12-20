@@ -5,13 +5,13 @@ import mongosanitize from "express-mongo-sanitize";
 import { config } from "dotenv";
 config();
 
-import userRouter from "./routes/user";
+import authRouter from "./routes/auth";
+// import userRouter from "./routes/user";
 // import conversationsRouter from "./routes/conversations";
 // import gigsRouter from "./routes/gigs";
 // import messagesRouter from "./routes/messages";
 // import ordersRouter from "./routes/orders";
 // import reviewsRouter from "./routes/reviews";
-// import authRouter from "./routes/auth";
 // import paymentRouter from "./routes/payment";
 
 import { errorHandler, notFoundHandler } from "./middlewares/catch-error";
@@ -38,8 +38,8 @@ app.use(
 app.use(mongosanitize());
 app.use(express.json());
 
-// app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
+// app.use("/api/user", userRouter);
 // app.use("/api/gigs", gigsRouter);
 // app.use("/api/reviews", reviewsRouter);
 // app.use("/api/orders", ordersRouter);
