@@ -1,3 +1,5 @@
+import { type Request, type Response, type NextFunction } from "express";
+
 import User from "../models/user";
 import Conversation from "../models/conversation";
 
@@ -6,14 +8,14 @@ import { httpsCodes } from "../constants/http";
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get all private conversations
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/conversations
  * @access private
  */
-export const getConversations = async (req, res, next) => {
+export const getConversations = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { isSeller, id: userId } = req.user;
 
@@ -53,14 +55,14 @@ export const getConversations = async (req, res, next) => {
 };
 
 /**
- * @desc Get a single conversation
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/conversations/single/:id
  * @access private
  */
-export const getConversation = async (req, res, next) => {
+export const getConversation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = req.user;
     const { id: conversationId } = req.params;
@@ -108,14 +110,14 @@ export const getConversation = async (req, res, next) => {
 };
 
 /**
- * @desc Update a single conversation
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/conversations/single
  * @access private
  */
-export const updateConversation = async (req, res, next) => {
+export const updateConversation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = req.user;
     const conversationId = req.body.id;
@@ -158,14 +160,14 @@ export const updateConversation = async (req, res, next) => {
 };
 
 /**
- * @desc Create a single converation
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/conversations/single
  * @access private
  */
-export const createConversation = async (req, res, next) => {
+export const createConversation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { isSeller, id: userId } = req.user;
     const messageToId = req.body.messageToId;
@@ -176,6 +178,11 @@ export const createConversation = async (req, res, next) => {
     }
 
     const user = await User.findById(messageToId).lean();
+
+    if (!user) {
+      res.status(UNAUTHORIZED);
+      throw Error("Unauthrized");
+    }
 
     if (isSeller && user.isSeller) {
       res.status(FORBIDDEN);
