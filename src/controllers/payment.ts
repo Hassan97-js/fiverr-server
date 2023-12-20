@@ -1,3 +1,4 @@
+import { type Request, type Response, type NextFunction } from "express";
 import Stripe from "stripe";
 
 import Gig from "../models/gig";
@@ -11,14 +12,14 @@ import { logger } from "../constants/logger";
 const { FORBIDDEN, NOT_FOUND, OK } = httpsCodes;
 
 /**
- * @desc Create a payment intent
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/payment/create-payment-intent
  * @access private
  */
-export const createPaymentIntent = async (req, res, next) => {
+export const createPaymentIntent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: userId, isSeller } = req.user;
     const { gigId } = req.body;
@@ -40,17 +41,19 @@ export const createPaymentIntent = async (req, res, next) => {
       throw Error("You are the owner of the gig");
     }
 
-    const stripe = new Stripe(STRIPE_TEST_SECRECT_KEY);
+    const stripe = new Stripe(STRIPE_TEST_SECRECT_KEY!, {
+      apiVersion: "2023-08-16",
+      typescript: true,
+    });
 
-    // Create a PaymentIntent with the order amount and currency
+    // confirm: true
+    // allow_redirects: "never"
     const paymentIntent = await stripe.paymentIntents.create({
       amount: gig.price * 100,
       currency: "sek",
       automatic_payment_methods: {
         enabled: true,
-        // allow_redirects: "never"
       },
-      // confirm: true
     });
 
     await Order.create({
@@ -65,24 +68,36 @@ export const createPaymentIntent = async (req, res, next) => {
 
     return res.status(OK).json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
-    switch (error.type) {
-      case "StripeCardError": {
-        logger.error(`A payment error occurred: ${error.message}`);
-        next(error);
-        break;
-      }
-      case "StripeInvalidRequestError": {
-        logger.error(`An invalid request occurred: ${error.message}`);
-        next(error);
-        break;
-      }
+    if (error instanceof Stripe.errors.StripeError) {
+      switch (error.type) {
+        case "StripeCardError": {
+          logger.error(`A payment error occurred: ${error.message}`);
+          next(error);
+          break;
+        }
+        case "StripeInvalidRequestError": {
+          logger.error(`An invalid request occurred: ${error.message}`);
+          next(error);
+          break;
+        }
 
-      default: {
-        logger.error(
-          `Another problem occurred, maybe unrelated to Stripe: ${error.message}`
-        );
-        next(error);
+        default: {
+          logger.error(
+            `Another problem occurred, maybe unrelated to Stripe: ${error.message}`
+          );
+          next(error);
+        }
       }
+    } else if (error instanceof Error) {
+      logger.error(
+        `Another problem occurred, maybe unrelated to Stripe: ${error.message}`
+      );
+      next(error);
+    } else if (error instanceof String) {
+      logger.error(
+        `Another problem occurred, maybe unrelated to Stripe: ${error}`
+      );
+      next(error);
     }
   }
 };
