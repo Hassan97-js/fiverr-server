@@ -10,7 +10,7 @@ import userRouter from "./routes/user";
 import gigsRouter from "./routes/gigs";
 import reviewsRouter from "./routes/reviews";
 import conversationsRouter from "./routes/conversations";
-// import messagesRouter from "./routes/messages";
+import messagesRouter from "./routes/messages";
 // import ordersRouter from "./routes/orders";
 // import paymentRouter from "./routes/payment";
 
@@ -43,7 +43,7 @@ app.use("/api/user", userRouter);
 app.use("/api/gigs", gigsRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/conversations", conversationsRouter);
-// app.use("/api/messages", messagesRouter);
+app.use("/api/messages", messagesRouter);
 // app.use("/api/orders", ordersRouter);
 // app.use("/api/payment", paymentRouter);
 

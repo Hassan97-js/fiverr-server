@@ -1,3 +1,4 @@
+import { type Request, type Response, type NextFunction } from "express";
 import Conversation from "../models/conversation";
 import Message from "../models/message";
 
@@ -6,14 +7,14 @@ import { httpsCodes } from "../constants/http";
 const { OK, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @desc Get all messages
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/messages/:id
  * @access private
  */
-export const getMessages = async (req, res, next) => {
+export const getMessages = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = req.user;
     const conversationId = req.params.id;
@@ -41,17 +42,15 @@ export const getMessages = async (req, res, next) => {
   }
 };
 
-/* TODO: Continue with creating a message then get messages */
-
 /**
- * @desc Create a single message
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
  * @route /api/messages/single
  * @access private
  */
-export const createMessage = async (req, res, next) => {
+export const createMessage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id: userId, isSeller } = req.user;
     const { conversationId, text } = req.body;
