@@ -35,20 +35,26 @@ export const getPublicGigsValidation = [
 ];
 
 export const signUpValidation = [
-  check("email")
+  body("email")
     .isEmail()
     .withMessage("Enter a valid email address")
     .normalizeEmail(),
-  check("username")
+  body("username")
     .not()
     .isEmpty()
     .withMessage("Username is required")
     .trim()
     .escape(),
-  check("password")
+  body("password")
     .notEmpty()
     .isLength({ min: 4, max: 30 })
-    .withMessage("Must be at least 8 chars long and max 30 chars"),
+    .withMessage("Must be at least 4 chars long and max 30 chars"),
+  body("country")
+    .not()
+    .isEmpty()
+    .withMessage("Country is required")
+    .trim()
+    .escape(),
 ];
 
 export const signInValidation = [

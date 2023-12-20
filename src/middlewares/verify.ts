@@ -6,13 +6,9 @@ import BlackList from "../models/black-list";
 import { SECRET_ACCESS_TOKEN } from "../config/index";
 import { getAccessToken } from "../utils/get-token";
 import { httpsCodes } from "../constants/http";
-import type { TJwtUser, TUser } from "../types/user";
 
 const { UNAUTHORIZED } = httpsCodes;
 
-/**
- * Verify user id with jwt token
- */
 export const verifyToken = async (
   req: Request,
   res: Response,
@@ -39,25 +35,20 @@ export const verifyToken = async (
         throw Error("Invalid token");
       }
 
-      console.log(typeof decoded);
-
+      // Todo: Validate with Zod?
       if (!decoded || typeof decoded !== "object" || !("username" in decoded)) {
         res.status(UNAUTHORIZED);
         throw Error("Invalid token");
       }
 
-      if (typeof decoded === "string") {
-        const parsedUser = JSON.parse(decoded) as TJwtUser;
+      const currentUser = {
+        id: decoded?.id,
+        username: decoded?.username,
+        email: decoded?.email,
+        isSeller: decoded?.isSeller,
+      };
 
-        const currentUser = {
-          id: parsedUser?.id,
-          username: parsedUser?.username,
-          email: parsedUser?.email,
-          isSeller: parsedUser?.isSeller,
-        };
-
-        req.user = currentUser;
-      }
+      req.user = currentUser;
     });
 
     next();

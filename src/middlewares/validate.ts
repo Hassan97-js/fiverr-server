@@ -1,39 +1,31 @@
-import { validationResult } from "express-validator";
+import { type Request, type Response, type NextFunction } from "express";
+import { type ValidationChain, validationResult } from "express-validator";
 
 import { httpsCodes } from "../constants/http";
 
 const { FORBIDDEN } = httpsCodes;
 
-export const validate = (validations) => {
+export const validate = (validations: ValidationChain[]) => {
   if (!validations || !Array.isArray(validations)) {
     throw Error("Invalid parameter");
   }
 
-  return async (req, res, next) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       for (const v of validations) {
         const result = await v.run(req);
 
-        if (result.errors.length) {
+        if (!result.isEmpty()) {
           break;
         }
       }
 
       const validationErrors = validationResult(req);
 
-      const errorSource = validationErrors?.errors[0]?.path;
-
       if (!validationErrors.isEmpty()) {
-        const responseError = {};
+        const errors = validationErrors.mapped();
 
-        validationErrors.array().map((error) => {
-          responseError[error.path] = error.msg;
-          responseError.value = error.value;
-
-          return responseError;
-        });
-
-        return res.status(FORBIDDEN).json({ error: responseError });
+        return res.status(FORBIDDEN).json({ errors });
       }
 
       return next();
@@ -41,7 +33,7 @@ export const validate = (validations) => {
       if (error instanceof Error) {
         next(error);
       }
-  
+
       if (error instanceof String) {
         next(error);
       }

@@ -6,13 +6,14 @@ import User from "../models/user";
 
 import { generateJWT } from "../utils/jwt";
 import { getAccessToken } from "../utils/get-token";
+
 import { httpsCodes } from "../constants/http";
 
 const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @desc Sign up user and save in DB
- * @route /api/auth/signup
+ * @route /api/auth/sign-up
  * @access public
  */
 export const signUp = async (
@@ -59,7 +60,7 @@ export const signUp = async (
 
 /**
  * @desc Sign in user with jwt
- * @route /api/auth/signin
+ * @route /api/auth/sign-in
  * @access public
  */
 export const signIn = async (
@@ -123,7 +124,7 @@ export const signIn = async (
 
 /**
  * @desc Sign out user
- * @route /api/auth/signout
+ * @route /api/auth/sign-out
  * @access private
  */
 export const signOut = async (

@@ -51,17 +51,19 @@ export const errorHandler = (
   res: Response<ErrorResponse>,
   _next: NextFunction
 ) => {
-  if (!error?.message) {
-    error.message = "Internal Server Error";
+  const currentError = typeof error === "string" ? new Error(error) : error;
+
+  if (!currentError.message) {
+    currentError.message = "Internal Server Error";
   }
 
   const isSuccess = res.statusCode === OK || res.statusCode === CREATED;
 
   const errorResponse = {
     title: "Error",
-    message: error.message,
+    message: currentError.message,
     success: isSuccess ? true : false,
-    stackTrace: NODE_ENV === "development" ? error.stack : undefined,
+    stackTrace: NODE_ENV === "development" ? currentError.stack : undefined,
   };
 
   switch (res.statusCode) {
@@ -85,7 +87,7 @@ export const errorHandler = (
       break;
   }
 
-  logger.error(error?.message);
+  logger.error(errorResponse?.message);
 
   return res.json(errorResponse);
 };
