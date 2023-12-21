@@ -17,6 +17,8 @@ export const verifyToken = async (
   try {
     const token = getAccessToken(req);
 
+    console.log(token);
+
     if (!token) {
       res.status(UNAUTHORIZED);
       throw Error("Invalid token");
@@ -45,7 +47,7 @@ export const verifyToken = async (
         id: decoded?.id,
         username: decoded?.username,
         email: decoded?.email,
-        isSeller: decoded?.isSeller,
+        isSeller: decoded?.isSeller
       };
 
       req.user = currentUser;
