@@ -15,11 +15,7 @@ const { OK, CREATED, FORBIDDEN, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
  * @route /api/auth/sign-up
  * @access public
  */
-export const signUp = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, password } = req.body;
 
@@ -35,7 +31,7 @@ export const signUp = async (
 
     const newUser = await User.create({
       ...req.body,
-      password: hash,
+      password: hash
     });
 
     res.status(CREATED).json({
@@ -44,7 +40,7 @@ export const signUp = async (
       username: newUser.username,
       isSeller: newUser.isSeller,
       country: newUser.country,
-      image: newUser.image ?? "",
+      image: newUser.image ?? ""
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -61,11 +57,7 @@ export const signUp = async (
  * @route /api/auth/sign-in
  * @access public
  */
-export const signIn = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signIn = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, password: sentPassword } = req.body;
 
@@ -83,17 +75,18 @@ export const signIn = async (
       throw Error("Wrong password or username");
     }
 
-    const { password, ...rest } = user;
-    const userToSend = rest;
+    const { password, createdAt, updatedAt, _id, phone, description, ...rest } =
+      user;
+    const userToSend = { id: _id, ...rest };
 
     const token = generateJWT({
       payload: {
-        id: userToSend._id,
+        id: userToSend.id,
         username: userToSend.username,
         email: userToSend.email,
-        isSeller: userToSend.isSeller,
+        isSeller: userToSend.isSeller
       },
-      expiresIn: "2 days",
+      expiresIn: "2 days"
     });
 
     if (!token) {
@@ -105,7 +98,7 @@ export const signIn = async (
       success: true,
       token,
       user: userToSend,
-      message: "You have successfully logged in",
+      message: "You have successfully logged in"
     };
 
     res.status(OK).json(payloadToSend);
@@ -124,11 +117,7 @@ export const signIn = async (
  * @route /api/auth/sign-out
  * @access private
  */
-export const signOut = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signOut = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = getAccessToken(req);
 
@@ -138,12 +127,12 @@ export const signOut = async (
     }
 
     await BlackList.create({
-      token,
+      token
     });
 
     return res.status(OK).json({
       success: true,
-      message: "Log out successful",
+      message: "Log out successful"
     });
   } catch (error) {
     if (error instanceof Error) {
