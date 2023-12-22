@@ -84,7 +84,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
         id: userToSend.id,
         username: userToSend.username,
         email: userToSend.email,
-        isSeller: userToSend.isSeller
+        isSeller: userToSend.isSeller,
+        image: userToSend.image
       },
       expiresIn: "2 days"
     });

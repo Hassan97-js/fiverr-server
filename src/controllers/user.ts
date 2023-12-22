@@ -9,11 +9,7 @@ const { OK, NOT_FOUND, UNAUTHORIZED } = httpsCodes;
  * @route /api/user/current
  * @access private
  */
-export const getUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: userId } = req.user;
 
@@ -30,11 +26,12 @@ export const getUser = async (
       email: user.email,
       country: user.country,
       isSeller: user.isSeller,
+      image: user.image
     };
 
     return res.status(OK).json({
       user: userToSend,
-      success: true,
+      success: true
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -76,7 +73,7 @@ export const deleteUser = async (
 
     return res.status(OK).json({
       success: true,
-      message: "User deleted",
+      message: "User deleted"
     });
   } catch (error) {
     if (error instanceof Error) {

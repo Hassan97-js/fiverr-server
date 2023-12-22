@@ -45,7 +45,8 @@ export const verifyToken = async (
         id: decoded?.id,
         username: decoded?.username,
         email: decoded?.email,
-        isSeller: decoded?.isSeller
+        isSeller: decoded?.isSeller,
+        image: decoded?.image ?? ""
       };
 
       req.user = currentUser;
