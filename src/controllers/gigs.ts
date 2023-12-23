@@ -26,7 +26,7 @@ export const getPrivateGigs = async (
 
     res.status(OK).json({
       gigs,
-      success: true,
+      success: true
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -43,11 +43,7 @@ export const getPrivateGigs = async (
  * @route /api/gigs
  * @access public
  */
-export const getGigs = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getGigs = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { sort: sortBy, search, min, max } = req.query;
 
@@ -71,8 +67,8 @@ export const getGigs = async (
         $text: {
           $search: `"${decode(search)}"`,
           $caseSensitive: false,
-          $diacriticSensitive: false,
-        },
+          $diacriticSensitive: false
+        }
       };
     }
 
@@ -81,13 +77,13 @@ export const getGigs = async (
     const gigs = await Gig.find(filterQuery)
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .sort({
-        [sortByKey]: -1,
+        [sortByKey]: -1
       })
       .lean();
 
     res.status(OK).json({
       success: true,
-      gigs,
+      gigs
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -104,11 +100,7 @@ export const getGigs = async (
  * @route /api/gigs/single/:id
  * @access public
  */
-export const getGig = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getGig = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: gigId } = req.params;
 
@@ -124,7 +116,7 @@ export const getGig = async (
       "email",
       "image",
       "country",
-      "isSeller",
+      "isSeller"
     ]);
 
     res.status(OK).json({ success: true, gig: foundGig });
@@ -143,11 +135,7 @@ export const getGig = async (
  * @route /api/gigs/single
  * @access private
  */
-export const createGig = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const createGig = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title: gigTitle } = req.body;
     const { id: userId, isSeller, username, email } = req.user;
@@ -166,7 +154,7 @@ export const createGig = async (
 
     const newGig = await Gig.create({
       ...req.body,
-      userId,
+      userId
     });
 
     res.status(CREATED).json(newGig);
@@ -185,11 +173,7 @@ export const createGig = async (
  * @route /api/gigs/single/:id
  * @access private
  */
-export const deleteGig = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteGig = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: gigId } = req.params;
 
