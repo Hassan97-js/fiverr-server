@@ -20,13 +20,9 @@ export const getReviews = async (
   try {
     const { gigId } = req.params;
 
-    const reviews = await Review.find({ gigId }).populate("userId", [
-      "username",
-      "email",
-      "image",
-      "country",
-      "isSeller",
-    ]);
+    const reviews = await Review.find({ gigId })
+      .populate("userId", ["username", "email", "image", "country", "isSeller"])
+      .select(["userId", "gigId", "starNumber", "description"]);
 
     return res.status(OK).json({ success: true, reviews });
   } catch (error) {
@@ -65,22 +61,22 @@ export const createReview = async (
       throw Error("Reivew already created");
     }
 
-    const order = await Order.findOne({
-      buyerId: userId,
-      gigId,
-      isCompleted: true,
-    });
+    // const order = await Order.findOne({
+    //   buyerId: userId,
+    //   gigId,
+    //   isCompleted: true
+    // });
 
-    if (!order) {
-      res.status(UNAUTHORIZED);
-      throw Error("User has not purchased the gig");
-    }
+    // if (!order) {
+    //   res.status(UNAUTHORIZED);
+    //   throw Error("User has not purchased the gig");
+    // }
 
     const newReview = await Review.create({
       userId,
       gigId,
       description,
-      starNumber,
+      starNumber
     });
 
     if (!newReview) {
@@ -91,10 +87,10 @@ export const createReview = async (
     const gig = await Gig.findOneAndUpdate(
       { _id: gigId },
       {
-        $inc: { totalStars: 1, starNumber },
+        $inc: { totalStars: 1, starNumber }
       },
       {
-        new: true,
+        new: true
       }
     );
 
@@ -130,7 +126,7 @@ export const deleteReview = async (
 
     const review = await Review.findOne({
       gigId,
-      userId: loggedInUserId,
+      userId: loggedInUserId
     }).lean();
 
     if (!review) {
@@ -145,7 +141,7 @@ export const deleteReview = async (
 
     const deletedReview = await Review.findOneAndDelete({
       gigId,
-      userId: loggedInUserId,
+      userId: loggedInUserId
     });
 
     if (!deletedReview) {

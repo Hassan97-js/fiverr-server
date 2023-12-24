@@ -21,7 +21,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     }
 
     const userToSend = {
-      id: user._id,
+      _id: user._id,
       username: user.username,
       email: user.email,
       country: user.country,
