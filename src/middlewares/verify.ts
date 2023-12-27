@@ -58,7 +58,7 @@ export const verifyToken = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

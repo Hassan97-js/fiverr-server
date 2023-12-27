@@ -50,7 +50,7 @@ export const getOrders = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -100,7 +100,7 @@ export const confirmOrder = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

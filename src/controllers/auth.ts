@@ -47,7 +47,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -108,7 +108,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -140,7 +140,7 @@ export const signOut = async (req: Request, res: Response, next: NextFunction) =
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

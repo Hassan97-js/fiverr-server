@@ -33,7 +33,7 @@ export const getPrivateGigs = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -90,7 +90,7 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -125,7 +125,7 @@ export const getGig = async (req: Request, res: Response, next: NextFunction) =>
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -163,7 +163,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -199,7 +199,7 @@ export const deleteGig = async (req: Request, res: Response, next: NextFunction)
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

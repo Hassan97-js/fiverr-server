@@ -30,7 +30,7 @@ export const getReviews = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -105,7 +105,7 @@ export const createReview = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -155,7 +155,7 @@ export const deleteReview = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

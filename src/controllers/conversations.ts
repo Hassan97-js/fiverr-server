@@ -21,25 +21,13 @@ export const getConversations = async (
 
     const converations = await Conversation.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
-      fetchId: { $regex: userId },
+      fetchId: { $regex: userId }
     })
       .sort({
-        updatedAt: -1,
+        updatedAt: -1
       })
-      .populate("sellerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller",
-      ])
-      .populate("buyerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller",
-      ])
+      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     return res.status(OK).json({ success: true, converations });
@@ -48,7 +36,7 @@ export const getConversations = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -73,20 +61,8 @@ export const getConversation = async (
     }
 
     const conversation = await Conversation.findOne({ fetchId: conversationId })
-      .populate("sellerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller",
-      ])
-      .populate("buyerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller",
-      ])
+      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     if (!conversation) {
@@ -96,14 +72,14 @@ export const getConversation = async (
 
     return res.status(OK).json({
       succcess: true,
-      conversation,
+      conversation
     });
   } catch (error) {
     if (error instanceof Error) {
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -132,8 +108,8 @@ export const updateConversation = async (
       {
         $set: {
           readBySeller: true,
-          readByBuyer: true,
-        },
+          readByBuyer: true
+        }
       },
       { new: true }
     ).lean();
@@ -146,14 +122,14 @@ export const updateConversation = async (
     return res.status(OK).json({
       success: true,
       conversation: updatedConversation,
-      message: "Conversation updated",
+      message: "Conversation updated"
     });
   } catch (error) {
     if (error instanceof Error) {
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -199,7 +175,7 @@ export const createConversation = async (
     }
 
     const conversation = await Conversation.findOne({
-      fetchId: isSeller ? userId + messageToId : messageToId + userId,
+      fetchId: isSeller ? userId + messageToId : messageToId + userId
     });
 
     if (conversation) {
@@ -211,7 +187,7 @@ export const createConversation = async (
       sellerId: isSeller ? userId : messageToId,
       buyerId: isSeller ? messageToId : userId,
       readBySeller: !!isSeller,
-      readByBuyer: !isSeller,
+      readByBuyer: !isSeller
     });
 
     return res
@@ -222,7 +198,7 @@ export const createConversation = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

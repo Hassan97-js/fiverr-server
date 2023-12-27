@@ -38,7 +38,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -80,7 +80,7 @@ export const deleteUser = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

@@ -93,7 +93,7 @@ export const createPaymentIntent = async (
         `Another problem occurred, maybe unrelated to Stripe: ${error.message}`
       );
       next(error);
-    } else if (error instanceof String) {
+    } else if (typeof error === "string") {
       logger.error(
         `Another problem occurred, maybe unrelated to Stripe: ${error}`
       );

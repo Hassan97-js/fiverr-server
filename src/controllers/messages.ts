@@ -25,7 +25,7 @@ export const getMessages = async (
     }
 
     const messages = await Message.find({
-      conversationId,
+      conversationId
     })
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
@@ -36,7 +36,7 @@ export const getMessages = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }
@@ -58,7 +58,7 @@ export const createMessage = async (
     const newMessage = await Message.create({
       conversationId,
       userId,
-      text,
+      text
     });
 
     if (!newMessage) {
@@ -72,8 +72,8 @@ export const createMessage = async (
         $set: {
           readBySeller: isSeller,
           readByBuyer: !isSeller,
-          lastMessage: text,
-        },
+          lastMessage: text
+        }
       },
       { new: true }
     );
@@ -89,7 +89,7 @@ export const createMessage = async (
       next(error);
     }
 
-    if (error instanceof String) {
+    if (typeof error === "string") {
       next(error);
     }
   }

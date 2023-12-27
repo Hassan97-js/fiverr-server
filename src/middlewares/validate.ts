@@ -34,7 +34,7 @@ export const validate = (validations: ValidationChain[]) => {
         next(error);
       }
 
-      if (error instanceof String) {
+      if (typeof error === "string") {
         next(error);
       }
     }
