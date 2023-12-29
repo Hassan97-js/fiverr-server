@@ -157,7 +157,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
       userId
     });
 
-    res.status(CREATED).json(newGig);
+    res.status(CREATED).json({ success: true, gig: newGig });
   } catch (error) {
     if (error instanceof Error) {
       next(error);

@@ -5,33 +5,31 @@ import { getObjectIdValidator } from "../utils/get-objectId-validator";
 
 export const createGigValidation = [
   body("title").notEmpty().withMessage("Title is required").escape(),
-  body("description")
-    .notEmpty()
-    .withMessage("Description is required")
-    .escape(),
+  body("description").notEmpty().withMessage("Description is required").escape(),
   body("category").notEmpty().withMessage("Category is required").escape(),
   body("price").notEmpty().withMessage("Price is required").escape(),
-  body("coverImage").notEmpty().withMessage("Cover image is required").escape(),
+  body("coverImage")
+    .notEmpty()
+    .withMessage("Cover image is required")
+    .escape()
+    .optional(),
   body("shortTitle").notEmpty().withMessage("Short title is required").escape(),
   body("shortDescription")
     .notEmpty()
     .withMessage("Short description is required")
     .escape(),
-  body("deliveryTime")
-    .notEmpty()
-    .withMessage("Delivery time is required")
-    .escape(),
+  body("deliveryTime").notEmpty().withMessage("Delivery time is required").escape(),
   body("revisionNumber")
     .notEmpty()
     .withMessage("Revision number is required")
-    .escape(),
+    .escape()
 ];
 
 export const getPublicGigsValidation = [
   query("search").trim().toLowerCase().escape().optional(),
   query("min").trim().escape().optional(),
   query("max").trim().escape().optional(),
-  query("sort").trim().toLowerCase().escape().optional(),
+  query("sort").trim().toLowerCase().escape().optional()
 ];
 
 export const signUpValidation = [
@@ -39,127 +37,74 @@ export const signUpValidation = [
     .isEmail()
     .withMessage("Enter a valid email address")
     .normalizeEmail(),
-  body("username")
-    .not()
-    .isEmpty()
-    .withMessage("Username is required")
-    .trim()
-    .escape(),
+  body("username").notEmpty().withMessage("Username is required").trim().escape(),
   body("password")
     .notEmpty()
     .isLength({ min: 4, max: 30 })
     .withMessage("Must be at least 4 chars long and max 30 chars"),
-  body("country")
-    .not()
-    .isEmpty()
-    .withMessage("Country is required")
-    .trim()
-    .escape(),
+  body("country").notEmpty().withMessage("Country is required").trim().escape()
 ];
 
 export const signInValidation = [
-  check("username")
-    .not()
-    .isEmpty()
-    .withMessage("Username is required")
-    .trim()
-    .escape(),
-  check("password").not().notEmpty().withMessage("Password is required"),
+  check("username").notEmpty().withMessage("Username is required").trim().escape(),
+  check("password").notEmpty().withMessage("Password is required")
 ];
 
 export const checkObjectIdValidator = getObjectIdValidator();
 
 export const getConversationValidator = [
-  param("id")
-    .not()
-    .isEmpty()
-    .withMessage("Conversation ID is required")
-    .trim()
-    .escape(),
+  param("id").notEmpty().withMessage("Conversation ID is required").trim().escape()
 ];
 
 export const createConversationValidator = [
   body("messageToId")
     .custom((value) => mongoose.Types.ObjectId.isValid(value))
-    .withMessage("Invalid ID"),
+    .withMessage("Invalid ID")
 ];
 
 export const updateConversationValidator = [
-  body("id")
-    .not()
-    .isEmpty()
-    .withMessage("Conversation ID is required")
-    .trim()
-    .escape(),
+  body("id").notEmpty().withMessage("Conversation ID is required").trim().escape()
 ];
 
 export const getMessagesValidator = [
-  param("id")
-    .not()
-    .isEmpty()
-    .withMessage("Conversation ID is required")
-    .trim()
-    .escape(),
+  param("id").notEmpty().withMessage("Conversation ID is required").trim().escape()
 ];
 
 export const createMessageValidator = [
   body("conversationId")
-    .not()
-    .isEmpty()
+    .notEmpty()
     .withMessage("Conversation ID is required")
     .trim()
     .escape(),
-  body("text").not().isEmpty().withMessage("Text is required").trim().escape(),
+  body("text").notEmpty().withMessage("Text is required").trim().escape()
 ];
 
 export const getReviewsValidator = [
-  param("gigId")
-    .not()
-    .isEmpty()
-    .withMessage("Gig ID is required")
-    .trim()
-    .escape(),
+  param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape()
 ];
 
 export const createReviewValidator = [
-  body("gigId")
-    .not()
-    .isEmpty()
-    .withMessage("Gig ID is required")
-    .trim()
-    .escape(),
+  body("gigId").notEmpty().withMessage("Gig ID is required").trim().escape(),
   body("description")
-    .not()
-    .isEmpty()
+    .notEmpty()
     .withMessage("Description is required")
     .trim()
     .escape(),
-  body("starNumber").isNumeric().withMessage("Star number must be a number"),
+  body("starNumber").isNumeric().withMessage("Star number must be a number")
 ];
 
 export const deleteReviewValidator = [
-  param("gigId")
-    .not()
-    .isEmpty()
-    .withMessage("Gig ID is required")
-    .trim()
-    .escape(),
+  param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape()
 ];
 
 export const confirmOrderValidator = [
   body("paymentIntent")
-    .not()
-    .isEmpty()
+    .notEmpty()
     .withMessage("Payment intent is required")
     .trim()
-    .escape(),
+    .escape()
 ];
 
 export const createPaymentIntentValidator = [
-  body("gigId")
-    .not()
-    .isEmpty()
-    .withMessage("Gig ID is required")
-    .trim()
-    .escape(),
+  body("gigId").notEmpty().withMessage("Gig ID is required").trim().escape()
 ];
