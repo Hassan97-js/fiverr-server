@@ -10,33 +10,17 @@ const { FORBIDDEN, OK, VALIDATION_ERROR, UNAUTHORIZED } = httpsCodes;
  * @route /api/orders
  * @access private
  */
-export const getOrders = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: userId, isSeller } = req.user;
 
     const completedOrders = await Order.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
-      isCompleted: true,
+      isCompleted: true
     })
       .populate("gigId", ["coverImage", "title", "price"])
-      .populate("sellerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller",
-      ])
-      .populate("buyerId", [
-        "username",
-        "email",
-        "image",
-        "country",
-        "isSeller",
-      ])
+      .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
+      .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
     if (!completedOrders) {
@@ -70,7 +54,7 @@ export const confirmOrder = async (
 
     const order = await Order.findOne({
       payment_intent: paymentIntent,
-      isCompleted: true,
+      isCompleted: true
     }).lean();
 
     if (order) {
@@ -85,12 +69,12 @@ export const confirmOrder = async (
 
     await Order.findOneAndUpdate(
       {
-        payment_intent: paymentIntent,
+        payment_intent: paymentIntent
       },
       {
         $set: {
-          isCompleted: true,
-        },
+          isCompleted: true
+        }
       }
     );
 

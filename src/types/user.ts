@@ -4,7 +4,7 @@ export type TUser = {
   id: string;
   username: string;
   email: string;
-  isSeller: string;
+  isSeller: boolean;
 };
 
 export type TJwtUser = TUser & TJwtPayload;
