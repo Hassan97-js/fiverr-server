@@ -52,28 +52,28 @@ export const signInValidation = [
 
 export const checkObjectIdValidator = getObjectIdValidator();
 
-export const getConversationValidator = [
-  param("id").notEmpty().withMessage("Conversation ID is required").trim().escape()
+export const getChatValidator = [
+  param("id").notEmpty().withMessage("Chat ID is required").trim().escape()
 ];
 
-export const createConversationValidator = [
+export const createChatValidator = [
   body("messageToId")
     .custom((value) => mongoose.Types.ObjectId.isValid(value))
     .withMessage("Invalid ID")
 ];
 
-export const updateConversationValidator = [
-  body("id").notEmpty().withMessage("Conversation ID is required").trim().escape()
+export const updateChatValidator = [
+  body("id").notEmpty().withMessage("Chat ID is required").trim().escape()
 ];
 
-export const getMessagesValidator = [
-  param("id").notEmpty().withMessage("Conversation ID is required").trim().escape()
+export const getChatMessagesValidator = [
+  param("id").notEmpty().withMessage("Chat ID is required").trim().escape()
 ];
 
 export const createMessageValidator = [
-  body("conversationId")
+  body("chatId")
     .notEmpty()
-    .withMessage("Conversation ID is required")
+    .withMessage("Chat ID is required")
     .trim()
     .escape(),
   body("text").notEmpty().withMessage("Text is required").trim().escape()

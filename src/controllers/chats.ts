@@ -1,25 +1,21 @@
 import { type Request, type Response, type NextFunction } from "express";
 
 import User from "../models/user";
-import Conversation from "../models/conversation";
+import Chat from "../models/chat";
 
 import { httpsCodes } from "../constants/http";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @route /api/conversations
+ * @route /api/chats
  * @access private
  */
-export const getConversations = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getChats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { isSeller, id: userId } = req.user;
 
-    const converations = await Conversation.find({
+    const converations = await Chat.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
       fetchId: { $regex: userId }
     })
@@ -43,36 +39,32 @@ export const getConversations = async (
 };
 
 /**
- * @route /api/conversations/single/:id
+ * @route /api/chats/single/:id
  * @access private
  */
-export const getConversation = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getChat = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
-    const { id: conversationId } = req.params;
+    const { id: chatId } = req.params;
 
-    if (!conversationId.includes(user.id)) {
+    if (!chatId.includes(user.id)) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized");
     }
 
-    const conversation = await Conversation.findOne({ fetchId: conversationId })
+    const chat = await Chat.findOne({ fetchId: chatId })
       .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
       .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
-    if (!conversation) {
+    if (!chat) {
       res.status(NOT_FOUND);
-      throw Error("Conversation not found");
+      throw Error("Chat not found");
     }
 
     return res.status(OK).json({
       succcess: true,
-      conversation
+      chat
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -86,25 +78,25 @@ export const getConversation = async (
 };
 
 /**
- * @route /api/conversations/single
+ * @route /api/chats/single
  * @access private
  */
-export const updateConversation = async (
+export const updateChat = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const user = req.user;
-    const conversationId = req.body.id;
+    const chatId = req.body.id;
 
-    if (!conversationId.includes(user.id)) {
+    if (!chatId.includes(user.id)) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized");
     }
 
-    const updatedConversation = await Conversation.findOneAndUpdate(
-      { fetchId: conversationId },
+    const updatedChat = await Chat.findOneAndUpdate(
+      { fetchId: chatId },
       {
         $set: {
           readBySeller: true,
@@ -114,15 +106,15 @@ export const updateConversation = async (
       { new: true }
     ).lean();
 
-    if (!updatedConversation) {
+    if (!updatedChat) {
       res.status(FORBIDDEN);
-      throw Error("Error updating conversation");
+      throw Error("Error updating chat");
     }
 
     return res.status(OK).json({
       success: true,
-      conversation: updatedConversation,
-      message: "Conversation updated"
+      chat: updatedChat,
+      message: "Chat updated"
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -136,10 +128,10 @@ export const updateConversation = async (
 };
 
 /**
- * @route /api/conversations/single
+ * @route /api/chats/single
  * @access private
  */
-export const createConversation = async (
+export const createChat = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -163,26 +155,26 @@ export const createConversation = async (
     if (isSeller && user.isSeller) {
       res.status(FORBIDDEN);
       throw Error(
-        "Seller is not allowed to create a conversation with another seller"
+        "Seller is not allowed to create a chat with another seller"
       );
     }
 
     if (!isSeller && !user.isSeller) {
       res.status(FORBIDDEN);
       throw Error(
-        "Client is not allowed to create a conversation with another client"
+        "Client is not allowed to create a chat with another client"
       );
     }
 
-    const conversation = await Conversation.findOne({
+    const chat = await Chat.findOne({
       fetchId: isSeller ? userId + messageToId : messageToId + userId
     });
 
-    if (conversation) {
-      return res.status(CREATED).json({ succcess: true, conversation });
+    if (chat) {
+      return res.status(CREATED).json({ succcess: true, chat });
     }
 
-    const newConversation = await Conversation.create({
+    const newChat = await Chat.create({
       fetchId: isSeller ? userId + messageToId : messageToId + userId,
       sellerId: isSeller ? userId : messageToId,
       buyerId: isSeller ? messageToId : userId,
@@ -190,9 +182,7 @@ export const createConversation = async (
       readByBuyer: !isSeller
     });
 
-    return res
-      .status(CREATED)
-      .json({ succcess: true, conversation: newConversation });
+    return res.status(CREATED).json({ succcess: true, chat: newChat });
   } catch (error) {
     if (error instanceof Error) {
       next(error);

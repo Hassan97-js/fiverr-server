@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
 
-const messageSchema = new Schema(
+const chatMessageSchema = new Schema(
   {
-    conversationId: {
+    chatId: {
       type: String,
-      ref: "Conversation",
+      ref: "Chat",
       required: true
     },
     userId: {
@@ -22,4 +22,4 @@ const messageSchema = new Schema(
   }
 );
 
-export default model("Message", messageSchema);
+export default model("Message", chatMessageSchema);

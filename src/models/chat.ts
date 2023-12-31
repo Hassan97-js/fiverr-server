@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const conversationSchema = new Schema(
+const chatSchema = new Schema(
   {
     fetchId: {
       type: String,
@@ -32,4 +32,4 @@ const conversationSchema = new Schema(
   }
 );
 
-export default model("Conversation", conversationSchema);
+export default model("Chat", chatSchema);

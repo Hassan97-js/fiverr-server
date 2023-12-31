@@ -10,8 +10,8 @@ import authRouter from "./routes/auth";
 import userRouter from "./routes/user";
 import gigsRouter from "./routes/gigs";
 import reviewsRouter from "./routes/reviews";
-import conversationsRouter from "./routes/conversations";
-import messagesRouter from "./routes/messages";
+import chatsRouter from "./routes/chats";
+import chatMessagesRouter from "./routes/chat-messages";
 import ordersRouter from "./routes/orders";
 import paymentRouter from "./routes/payment";
 
@@ -44,8 +44,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/gigs", gigsRouter);
 app.use("/api/reviews", reviewsRouter);
-app.use("/api/conversations", conversationsRouter);
-app.use("/api/messages", messagesRouter);
+app.use("/api/chats", chatsRouter);
+app.use("/api/chat-messages", chatMessagesRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/payment", paymentRouter);
 

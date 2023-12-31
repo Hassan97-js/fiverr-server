@@ -1,32 +1,30 @@
 import { type Request, type Response, type NextFunction } from "express";
-import Conversation from "../models/conversation";
-import Message from "../models/message";
+import Chat from "../models/chat";
+import ChatMessage from "../models/chat-message";
 
 import { httpsCodes } from "../constants/http";
 
 const { OK, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
- * @route /api/messages/:id
+ * @route /api/chat-messages/:id
  * @access private
  */
-export const getMessages = async (
+export const getChatMessages = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const user = req.user;
-    const conversationId = req.params.id;
+    const chatId = req.params.id;
 
-    if (!conversationId.includes(user.id)) {
+    if (!chatId.includes(user.id)) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized");
     }
 
-    const messages = await Message.find({
-      conversationId
-    })
+    const messages = await ChatMessage.find({ chatId })
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
@@ -43,7 +41,7 @@ export const getMessages = async (
 };
 
 /**
- * @route /api/messages/single
+ * @route /api/chat-messages/single
  * @access private
  */
 export const createMessage = async (
@@ -53,10 +51,10 @@ export const createMessage = async (
 ) => {
   try {
     const { id: userId, isSeller } = req.user;
-    const { conversationId, text } = req.body;
+    const { chatId, text } = req.body;
 
-    const newMessage = await Message.create({
-      conversationId,
+    const newMessage = await ChatMessage.create({
+      chatId,
       userId,
       text
     });
@@ -66,8 +64,8 @@ export const createMessage = async (
       throw Error("Error creating a message");
     }
 
-    const conversation = await Conversation.findOneAndUpdate(
-      { fetchId: conversationId },
+    const chat = await Chat.findOneAndUpdate(
+      { fetchId: chatId },
       {
         $set: {
           readBySeller: isSeller,
@@ -78,9 +76,9 @@ export const createMessage = async (
       { new: true }
     );
 
-    if (!conversation) {
+    if (!chat) {
       res.status(UNAUTHORIZED);
-      throw Error("Error updating a conversation");
+      throw Error("Error updating a chat");
     }
 
     return res.status(CREATED).json({ success: true, chatMessage: newMessage });
