@@ -15,7 +15,7 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
   try {
     const { isSeller, id: userId } = req.user;
 
-    const converations = await Chat.find({
+    const chats = await Chat.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
       fetchId: { $regex: userId }
     })
@@ -26,7 +26,7 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
       .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
 
-    return res.status(OK).json({ success: true, converations });
+    return res.status(OK).json({ success: true, chats });
   } catch (error) {
     if (error instanceof Error) {
       next(error);
@@ -154,16 +154,12 @@ export const createChat = async (
 
     if (isSeller && user.isSeller) {
       res.status(FORBIDDEN);
-      throw Error(
-        "Seller is not allowed to create a chat with another seller"
-      );
+      throw Error("Seller is not allowed to create a chat with another seller");
     }
 
     if (!isSeller && !user.isSeller) {
       res.status(FORBIDDEN);
-      throw Error(
-        "Client is not allowed to create a chat with another client"
-      );
+      throw Error("Client is not allowed to create a chat with another client");
     }
 
     const chat = await Chat.findOne({
