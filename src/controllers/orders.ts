@@ -52,19 +52,15 @@ export const confirmOrder = async (
   try {
     const { paymentIntent } = req.body;
 
+    console.log(req.body);
+
     const order = await Order.findOne({
-      payment_intent: paymentIntent,
-      isCompleted: true
+      payment_intent: paymentIntent
     }).lean();
 
-    if (order) {
+    if (order?.isCompleted) {
       res.status(FORBIDDEN);
       throw Error("Order is already completed");
-    }
-
-    if (!order) {
-      res.status(VALIDATION_ERROR);
-      throw Error("Payment intent is not valid");
     }
 
     await Order.findOneAndUpdate(

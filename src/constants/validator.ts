@@ -71,11 +71,7 @@ export const getChatMessagesValidator = [
 ];
 
 export const createMessageValidator = [
-  body("chatId")
-    .notEmpty()
-    .withMessage("Chat ID is required")
-    .trim()
-    .escape(),
+  body("chatId").notEmpty().withMessage("Chat ID is required").trim().escape(),
   body("text").notEmpty().withMessage("Text is required").trim().escape()
 ];
 
@@ -101,6 +97,7 @@ export const confirmOrderValidator = [
   body("paymentIntent")
     .notEmpty()
     .withMessage("Payment intent is required")
+    .toLowerCase()
     .trim()
     .escape()
 ];

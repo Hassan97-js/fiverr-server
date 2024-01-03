@@ -43,7 +43,7 @@ export const createPaymentIntent = async (
 
     const stripe = new Stripe(STRIPE_TEST_SECRECT_KEY!, {
       apiVersion: "2023-08-16",
-      typescript: true,
+      typescript: true
     });
 
     // confirm: true
@@ -52,8 +52,8 @@ export const createPaymentIntent = async (
       amount: gig.price * 100,
       currency: "sek",
       automatic_payment_methods: {
-        enabled: true,
-      },
+        enabled: true
+      }
     });
 
     await Order.create({
@@ -63,7 +63,7 @@ export const createPaymentIntent = async (
       buyerId: req.user.id,
       sellerId: gig.userId,
       price: gig.price,
-      payment_intent: paymentIntent.id,
+      payment_intent: paymentIntent.id
     });
 
     return res.status(OK).json({ clientSecret: paymentIntent.client_secret });
@@ -94,9 +94,7 @@ export const createPaymentIntent = async (
       );
       next(error);
     } else if (typeof error === "string") {
-      logger.error(
-        `Another problem occurred, maybe unrelated to Stripe: ${error}`
-      );
+      logger.error(`Another problem occurred, maybe unrelated to Stripe: ${error}`);
       next(error);
     }
   }

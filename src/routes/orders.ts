@@ -10,6 +10,7 @@ import { confirmOrderValidator } from "../constants/validator";
 const router = express.Router();
 
 router.get("/", verifyToken, getOrders);
+// TODO: FIX confirmOrderValidator
 router.put("/single", verifyToken, validate(confirmOrderValidator), confirmOrder);
 
 export default router;
