@@ -97,7 +97,6 @@ export const confirmOrderValidator = [
   body("paymentIntent")
     .notEmpty()
     .withMessage("Payment intent is required")
-    .toLowerCase()
     .trim()
     .escape()
 ];

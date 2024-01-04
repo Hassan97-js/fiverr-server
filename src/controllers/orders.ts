@@ -52,11 +52,10 @@ export const confirmOrder = async (
   try {
     const { paymentIntent } = req.body;
 
-    console.log(req.body);
-
     const order = await Order.findOne({
-      payment_intent: paymentIntent
-    }).lean();
+      payment_intent: paymentIntent,
+      isCompleted: true
+    });
 
     if (order?.isCompleted) {
       res.status(FORBIDDEN);
