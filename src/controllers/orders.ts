@@ -18,7 +18,7 @@ export const getOrders = async (req: Request, res: Response, next: NextFunction)
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
       isCompleted: true
     })
-      .populate("gigId", ["coverImage", "title", "price"])
+      .populate("gigId", ["coverImage", "title", "price", "userId"])
       .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
       .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
