@@ -50,11 +50,11 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
     let filterQuery: TGigsFilterQuery = {};
 
     if (typeof min === "string" && min) {
-      filterQuery.price = { $gte: min };
+      filterQuery.price = { ...filterQuery.price, $gte: min };
     }
 
     if (typeof max === "string" && max) {
-      filterQuery.price = { $gte: max };
+      filterQuery.price = { ...filterQuery.price, $lte: max };
     }
 
     if (typeof min === "string" && typeof max === "string" && min && max) {
@@ -71,6 +71,8 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
         }
       };
     }
+
+    // console.log(filterQuery);
 
     const sortByKey = String(sortBy) || "createdAt";
 
