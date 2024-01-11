@@ -29,7 +29,7 @@ export const getPublicGigsValidation = [
   query("search").trim().toLowerCase().escape().optional(),
   query("min").trim().escape().optional(),
   query("max").trim().escape().optional(),
-  query("sort").trim().toLowerCase().escape().optional()
+  query("sortBy").trim().toLowerCase().escape().optional()
 ];
 
 export const signUpValidation = [

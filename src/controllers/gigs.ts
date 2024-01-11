@@ -45,7 +45,7 @@ export const getPrivateGigs = async (
  */
 export const getGigs = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { sort: sortBy, search, min, max } = req.query;
+    const { sortBy: sortBy, search, min, max } = req.query;
 
     let filterQuery: TGigsFilterQuery = {};
 
@@ -72,9 +72,23 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
       };
     }
 
-    // console.log(filterQuery);
+    let sortByKey = String(sortBy);
 
-    const sortByKey = String(sortBy) || "createdAt";
+    switch (sortByKey) {
+      case "newest": {
+        sortByKey = "createdAt";
+        break;
+      }
+
+      case "best selling": {
+        sortByKey = "sales";
+        break;
+      }
+
+      default: {
+        sortByKey = "";
+      }
+    }
 
     const gigs = await Gig.find(filterQuery)
       .populate("userId", ["username", "email", "image", "country", "isSeller"])

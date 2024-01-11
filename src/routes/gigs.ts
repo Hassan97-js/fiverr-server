@@ -5,7 +5,7 @@ import {
   getPrivateGigs,
   getGig,
   createGig,
-  deleteGig,
+  deleteGig
 } from "../controllers/gigs";
 
 import { verifyToken } from "../middlewares/verify";
@@ -14,7 +14,7 @@ import { validate } from "../middlewares/validate";
 import {
   createGigValidation,
   getPublicGigsValidation,
-  checkObjectIdValidator,
+  checkObjectIdValidator
 } from "../constants/validator";
 
 const router = express.Router();
