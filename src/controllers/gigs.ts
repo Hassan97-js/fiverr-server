@@ -72,7 +72,7 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
       };
     }
 
-    let sortByKey = String(sortBy);
+    let sortByKey: string = String(sortBy);
 
     switch (sortByKey) {
       case "newest": {
@@ -86,7 +86,7 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
       }
 
       default: {
-        sortByKey = "";
+        sortByKey = "createdAt";
       }
     }
 
