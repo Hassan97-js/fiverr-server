@@ -19,6 +19,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { username, password } = req.body;
 
+    console.log(req.body);
+
     const isUserExists = await User.exists({ username }).lean();
 
     if (isUserExists) {

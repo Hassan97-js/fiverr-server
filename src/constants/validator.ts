@@ -42,7 +42,13 @@ export const signUpValidation = [
     .notEmpty()
     .isLength({ min: 4, max: 30 })
     .withMessage("Must be at least 4 chars long and max 30 chars"),
-  body("country").notEmpty().withMessage("Country is required").trim().escape()
+  body("country").notEmpty().withMessage("Country is required").trim().escape(),
+  body("image")
+    .isString()
+    .withMessage("Image must be string")
+    .trim()
+    .escape()
+    .optional()
 ];
 
 export const signInValidation = [

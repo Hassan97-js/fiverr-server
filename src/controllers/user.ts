@@ -1,5 +1,7 @@
 import User from "../models/user";
 
+import { decode } from "html-entities";
+
 import { httpsCodes } from "../constants/http";
 import { type NextFunction, type Request, type Response } from "express";
 
@@ -26,7 +28,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
       email: user.email,
       country: user.country,
       isSeller: user.isSeller,
-      image: user.image
+      image: decode(user.image)
     };
 
     return res.status(OK).json({
