@@ -12,11 +12,7 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
  * @route /api/gigs/private
  * @access private
  */
-export const getPrivateGigs = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getPrivateGigs = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: userId } = req.user;
 
@@ -90,12 +86,19 @@ export const getGigs = async (req: Request, res: Response, next: NextFunction) =
       }
     }
 
-    const gigs = await Gig.find(filterQuery)
-      .populate("userId", ["username", "email", "image", "country", "isSeller"])
-      .sort({
-        [sortByKey]: -1
-      })
-      .lean();
+    const gigs = (
+      await Gig.find(filterQuery)
+        .populate("userId", ["username", "email", "image", "country", "isSeller"])
+        .sort({
+          [sortByKey]: -1
+        })
+        .lean()
+    ).map((gig) => {
+      return {
+        ...gig,
+        coverImage: decode(gig.coverImage)
+      };
+    });
 
     res.status(OK).json({
       success: true,
@@ -127,13 +130,7 @@ export const getGig = async (req: Request, res: Response, next: NextFunction) =>
       throw Error("Gig not found");
     }
 
-    const foundGig = await gig.populate("userId", [
-      "username",
-      "email",
-      "image",
-      "country",
-      "isSeller"
-    ]);
+    const foundGig = await gig.populate("userId", ["username", "email", "image", "country", "isSeller"]);
 
     res.status(OK).json({ success: true, gig: foundGig });
   } catch (error) {
