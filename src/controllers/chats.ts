@@ -17,7 +17,7 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 
     const chats = await Chat.find({
       ...(isSeller ? { sellerId: userId } : { buyerId: userId }),
-      fetchId: { $regex: userId }
+      chatId: { $regex: userId }
     })
       .sort({
         updatedAt: -1
@@ -52,7 +52,7 @@ export const getChat = async (req: Request, res: Response, next: NextFunction) =
       throw Error("Unauthorized");
     }
 
-    const chat = await Chat.findOne({ fetchId: chatId })
+    const chat = await Chat.findOne({ chatId })
       .populate("sellerId", ["username", "email", "image", "country", "isSeller"])
       .populate("buyerId", ["username", "email", "image", "country", "isSeller"])
       .lean();
@@ -81,11 +81,7 @@ export const getChat = async (req: Request, res: Response, next: NextFunction) =
  * @route /api/chats/single
  * @access private
  */
-export const updateChat = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const updateChat = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     const chatId = req.body.id;
@@ -96,7 +92,7 @@ export const updateChat = async (
     }
 
     const updatedChat = await Chat.findOneAndUpdate(
-      { fetchId: chatId },
+      { chatId },
       {
         $set: {
           readBySeller: true,
@@ -131,21 +127,17 @@ export const updateChat = async (
  * @route /api/chats/single
  * @access private
  */
-export const createChat = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const createChat = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { isSeller, id: userId } = req.user;
-    const messageToId = req.body.messageToId;
+    const { isSeller, id: senderId } = req.user;
+    const receiverId = req.body.receiverId;
 
-    if (messageToId === userId) {
+    if (receiverId === senderId) {
       res.status(FORBIDDEN);
       throw Error("Forbidden");
     }
 
-    const user = await User.findById(messageToId).lean();
+    const user = await User.findById(receiverId).lean();
 
     if (!user) {
       res.status(UNAUTHORIZED);
@@ -162,8 +154,10 @@ export const createChat = async (
       throw Error("Client is not allowed to create a chat with another client");
     }
 
+    const chatId = isSeller ? `${senderId}-${receiverId}` : `${receiverId}-${senderId}`;
+
     const chat = await Chat.findOne({
-      fetchId: isSeller ? userId + messageToId : messageToId + userId
+      chatId
     });
 
     if (chat) {
@@ -171,9 +165,9 @@ export const createChat = async (
     }
 
     const newChat = await Chat.create({
-      fetchId: isSeller ? userId + messageToId : messageToId + userId,
-      sellerId: isSeller ? userId : messageToId,
-      buyerId: isSeller ? messageToId : userId,
+      chatId,
+      sellerId: isSeller ? senderId : receiverId,
+      buyerId: isSeller ? receiverId : senderId,
       readBySeller: !!isSeller,
       readByBuyer: !isSeller
     });

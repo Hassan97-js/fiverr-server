@@ -63,7 +63,7 @@ export const getChatValidator = [
 ];
 
 export const createChatValidator = [
-  body("messageToId")
+  body("receiverId")
     .custom((value) => mongoose.Types.ObjectId.isValid(value))
     .withMessage("Invalid ID")
 ];

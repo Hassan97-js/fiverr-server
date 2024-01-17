@@ -2,33 +2,33 @@ import { Schema, model } from "mongoose";
 
 const chatSchema = new Schema(
   {
-    fetchId: {
+    chatId: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     sellerId: {
       type: String,
       ref: "User",
-      required: true,
+      required: true
     },
     buyerId: {
       type: String,
       ref: "User",
-      required: true,
+      required: true
     },
     lastMessage: String,
     readBySeller: {
       type: Boolean,
-      required: true,
+      required: true
     },
     readByBuyer: {
       type: Boolean,
-      required: true,
-    },
+      required: true
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
