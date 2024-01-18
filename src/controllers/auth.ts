@@ -19,8 +19,6 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { username, password } = req.body;
 
-    console.log(req.body);
-
     const isUserExists = await User.exists({ username }).lean();
 
     if (isUserExists) {
@@ -77,8 +75,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
       throw Error("Wrong password or username");
     }
 
-    const { password, createdAt, updatedAt, _id, phone, description, ...rest } =
-      user;
+    const { password, createdAt, updatedAt, _id, phone, description, ...rest } = user;
     const userToSend = { id: _id, ...rest };
 
     const token = generateJWT({
