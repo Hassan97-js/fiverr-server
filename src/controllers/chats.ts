@@ -102,15 +102,9 @@ export const updateChat = async (req: Request, res: Response, next: NextFunction
       { new: true }
     ).lean();
 
-    if (!updatedChat) {
-      res.status(FORBIDDEN);
-      throw Error("Error updating chat");
-    }
-
     return res.status(OK).json({
       success: true,
-      chat: updatedChat,
-      message: "Chat updated"
+      chat: updatedChat
     });
   } catch (error) {
     if (error instanceof Error) {
