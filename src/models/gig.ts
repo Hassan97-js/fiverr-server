@@ -37,9 +37,12 @@ const gigSchema = new Schema(
     },
     coverImage: {
       type: String,
-      required: false
+      required: true
     },
-    images: [String],
+    images: {
+      type: [String],
+      required: true
+    },
     shortTitle: {
       type: String,
       required: true
