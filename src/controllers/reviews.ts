@@ -53,16 +53,16 @@ export const createReview = async (req: Request, res: Response, next: NextFuncti
       throw Error("Reivew already created");
     }
 
-    // const order = await Order.findOne({
-    //   buyerId: userId,
-    //   gigId,
-    //   isCompleted: true
-    // });
+    const order = await Order.findOne({
+      buyerId: userId,
+      gigId,
+      isCompleted: true
+    });
 
-    // if (!order) {
-    //   res.status(UNAUTHORIZED);
-    //   throw Error("User has not purchased the gig");
-    // }
+    if (!order) {
+      res.status(UNAUTHORIZED);
+      throw Error("You has not purchased the gig");
+    }
 
     const newReview = await Review.create({
       userId,
@@ -99,27 +99,22 @@ export const createReview = async (req: Request, res: Response, next: NextFuncti
  */
 export const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id: loggedInUserId } = req.user;
+    const { id: userId } = req.user;
     const { gigId, decrementRatings } = req.params;
 
     const review = await Review.findOne({
       gigId,
-      userId: loggedInUserId
+      userId
     }).lean();
 
     if (!review) {
-      res.status(NOT_FOUND);
-      throw Error("Review not found");
-    }
-
-    if (review.userId.toString() !== loggedInUserId) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthorized");
     }
 
     await Review.findOneAndDelete({
       gigId,
-      userId: loggedInUserId
+      userId
     });
 
     await Gig.findOneAndUpdate(
