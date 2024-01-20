@@ -28,13 +28,7 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 
     return res.status(OK).json({ success: true, chats });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -67,13 +61,7 @@ export const getChat = async (req: Request, res: Response, next: NextFunction) =
       chat
     });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -107,13 +95,7 @@ export const updateChat = async (req: Request, res: Response, next: NextFunction
       chat: updatedChat
     });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -168,12 +150,6 @@ export const createChat = async (req: Request, res: Response, next: NextFunction
 
     return res.status(CREATED).json({ succcess: true, chat: newChat });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };

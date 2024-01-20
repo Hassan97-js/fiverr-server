@@ -51,13 +51,7 @@ export const getChatMessages = async (req: Request, res: Response, next: NextFun
 
     return res.status(OK).json({ success: true, chatMessages: messages, receiver: receiverToSend });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -100,12 +94,6 @@ export const createMessage = async (req: Request, res: Response, next: NextFunct
 
     return res.status(CREATED).json({ success: true, chatMessage: newMessage });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };

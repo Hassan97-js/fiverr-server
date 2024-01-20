@@ -30,13 +30,7 @@ export const validate = (validations: ValidationChain[]) => {
 
       return next();
     } catch (error) {
-      if (error instanceof Error) {
-        next(error);
-      }
-
-      if (typeof error === "string") {
-        next(error);
-      }
+      next(error);
     }
   };
 };

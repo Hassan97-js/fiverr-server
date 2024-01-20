@@ -36,13 +36,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
       success: true
     });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -50,11 +44,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
  * @route /api/user/:id
  * @access private
  */
-export const deleteUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: userIdToDelete } = req.params;
     const { id: loggedInUserId } = req.user;
@@ -78,12 +68,6 @@ export const deleteUser = async (
       message: "User deleted"
     });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };

@@ -22,13 +22,7 @@ export const getReviews = async (req: Request, res: Response, next: NextFunction
 
     return res.status(OK).json({ success: true, reviews });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -83,13 +77,7 @@ export const createReview = async (req: Request, res: Response, next: NextFuncti
 
     return res.status(CREATED).json({ success: true, review: newReview });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -130,12 +118,6 @@ export const deleteReview = async (req: Request, res: Response, next: NextFuncti
 
     res.status(OK).json({ success: true });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };

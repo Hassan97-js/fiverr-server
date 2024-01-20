@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from "express";
+import Stripe from "stripe";
 
 import { NODE_ENV } from "../config";
 
@@ -7,21 +8,9 @@ import { logger } from "../constants/logger";
 
 import type { ErrorResponse } from "../types/response";
 
-const {
-  VALIDATION_ERROR,
-  OK,
-  UNAUTHORIZED,
-  CREATED,
-  NOT_FOUND,
-  FORBIDDEN,
-  SERVER_ERROR,
-} = httpsCodes;
+const { VALIDATION_ERROR, OK, UNAUTHORIZED, CREATED, NOT_FOUND, FORBIDDEN, SERVER_ERROR } = httpsCodes;
 
-export const notFoundHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { originalUrl: fullURL } = req;
 
@@ -35,23 +24,40 @@ export const notFoundHandler = (
     res.status(NOT_FOUND);
     next(error);
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
-export const errorHandler = (
-  error: Error,
-  _req: Request,
-  res: Response<ErrorResponse>,
-  _next: NextFunction
-) => {
-  const currentError = typeof error === "string" ? new Error(error) : error;
+export const errorHandler = (error: Error, _req: Request, res: Response<ErrorResponse>, _next: NextFunction) => {
+  let currentError: Error = new Error("Internal Server Error");
+
+  if (error instanceof Error) {
+    currentError = error;
+  }
+
+  if (typeof error === "string") {
+    currentError = new Error(error);
+  }
+
+  if (error instanceof Stripe.errors.StripeError) {
+    switch (error.type) {
+      case "StripeCardError": {
+        logger.error(`A payment error occurred: ${error.message}`);
+        currentError = new Error(error.message);
+        break;
+      }
+      case "StripeInvalidRequestError": {
+        logger.error(`An invalid request occurred: ${error.message}`);
+        currentError = new Error(error.message);
+        break;
+      }
+
+      default: {
+        logger.error(`Another problem occurred, maybe unrelated to Stripe: ${error.message}`);
+        currentError = new Error(error.message);
+      }
+    }
+  }
 
   if (!currentError.message) {
     currentError.message = "Internal Server Error";
@@ -60,10 +66,10 @@ export const errorHandler = (
   const isSuccess = res.statusCode === OK || res.statusCode === CREATED;
 
   const errorResponse = {
-    title: "Error",
+    title: "Internal Server Error",
     message: currentError.message,
     success: isSuccess ? true : false,
-    stackTrace: NODE_ENV === "development" ? currentError.stack : undefined,
+    stackTrace: NODE_ENV === "development" ? currentError.stack : undefined
   };
 
   switch (res.statusCode) {

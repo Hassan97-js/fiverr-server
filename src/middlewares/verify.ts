@@ -9,11 +9,7 @@ import { httpsCodes } from "../constants/http";
 
 const { UNAUTHORIZED } = httpsCodes;
 
-export const verifyToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = getAccessToken(req);
 
@@ -54,12 +50,6 @@ export const verifyToken = async (
 
     next();
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };

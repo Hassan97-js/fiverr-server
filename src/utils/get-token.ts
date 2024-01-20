@@ -1,8 +1,5 @@
 import { Request } from "express";
 
-/**
- * Gets an access token from request header
- */
 export const getAccessToken = (req: Request) => {
   try {
     const authHeader = req.headers.Authorization || req.headers.authorization;

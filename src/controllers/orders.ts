@@ -30,13 +30,7 @@ export const getOrders = async (req: Request, res: Response, next: NextFunction)
 
     return res.status(OK).json({ success: true, orders: completedOrders });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -44,11 +38,7 @@ export const getOrders = async (req: Request, res: Response, next: NextFunction)
  * @route /api/orders/single
  * @access private
  */
-export const confirmOrder = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const confirmOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { paymentIntent } = req.body;
 
@@ -75,12 +65,6 @@ export const confirmOrder = async (
 
     return res.status(OK).json({ success: true, message: "Order completed" });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };

@@ -43,13 +43,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
       image: newUser.image ?? ""
     });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -103,13 +97,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
 
     res.status(OK).json(payloadToSend);
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
 
@@ -135,12 +123,6 @@ export const signOut = async (req: Request, res: Response, next: NextFunction) =
       message: "Log out successful"
     });
   } catch (error) {
-    if (error instanceof Error) {
-      next(error);
-    }
-
-    if (typeof error === "string") {
-      next(error);
-    }
+    next(error);
   }
 };
