@@ -85,7 +85,12 @@ export const createReviewValidator = [
 
 export const deleteReviewValidator = [
   param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape(),
-  param("decrementRatings").isNumeric().withMessage("decrementRatings is required").trim().escape()
+  query("decrementRatings")
+    .isInt({
+      min: 1,
+      max: 5
+    })
+    .withMessage("decrementRatings is required")
 ];
 
 export const confirmOrderValidator = [
