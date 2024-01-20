@@ -14,7 +14,8 @@ export const createGigValidation = [
       require_tld: false,
       host_whitelist: [new RegExp("cloudinary")]
     })
-    .withMessage("Cover image must be a valid url"),
+    .withMessage("Cover image must be a valid url")
+    .trim(),
   body("images")
     .isArray({
       min: 1,
@@ -25,7 +26,8 @@ export const createGigValidation = [
       require_tld: false,
       host_whitelist: [new RegExp("cloudinary")]
     })
-    .withMessage("Gig images must be an array with valid urls"),
+    .withMessage("Gig images must be an array with valid urls")
+    .trim(),
 
   body("shortTitle").notEmpty().withMessage("Short title is required").escape(),
   body("shortDescription").notEmpty().withMessage("Short description is required").escape(),
@@ -48,17 +50,27 @@ export const signUpValidation = [
     .isLength({ min: 4, max: 30 })
     .withMessage("Must be at least 4 chars long and max 30 chars"),
   body("country").notEmpty().withMessage("Country is required").trim().escape(),
-  body("image").isString().withMessage("Image must be string").trim().escape().optional()
+  body("image")
+    .notEmpty()
+    .isURL({
+      require_tld: false,
+      host_whitelist: [new RegExp("cloudinary")]
+    })
+    .withMessage("Profile image must be a valid url")
+    .trim()
+    .optional()
 ];
 
 export const signInValidation = [
   check("username").notEmpty().withMessage("Username is required").trim().escape(),
-  check("password").notEmpty().withMessage("Password is required")
+  check("password").notEmpty().withMessage("Password is required").trim()
 ];
 
 export const checkObjectIdValidator = getObjectIdValidator();
 
-export const getChatValidator = [param("id").notEmpty().withMessage("Chat ID is required").trim().escape()];
+export const getChatValidator = [
+  param("id").notEmpty().isLength({ min: 1, max: 49 }).withMessage("Chat ID must be 49 characters").trim().escape()
+];
 
 export const createChatValidator = [
   body("receiverId")
@@ -66,25 +78,56 @@ export const createChatValidator = [
     .withMessage("Invalid ID")
 ];
 
-export const updateChatValidator = [body("id").notEmpty().withMessage("Chat ID is required").trim().escape()];
-
-export const getChatMessagesValidator = [param("id").notEmpty().withMessage("Chat ID is required").trim().escape()];
-
-export const createMessageValidator = [
-  body("chatId").notEmpty().withMessage("Chat ID is required").trim().escape(),
-  body("text").notEmpty().withMessage("Text is required").trim().escape()
+export const updateChatValidator = [
+  body("id").notEmpty().isLength({ min: 1, max: 49 }).withMessage("Chat ID must be 49 characters").trim().escape()
 ];
 
-export const getReviewsValidator = [param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape()];
+export const getChatMessagesValidator = [
+  param("id").notEmpty().isLength({ min: 1, max: 49 }).withMessage("Chat ID must be 49 characters").trim().escape()
+];
+
+export const createMessageValidator = [
+  body("chatId").notEmpty().isLength({ min: 1, max: 49 }).withMessage("Chat ID must be 49 characters").trim().escape(),
+  body("text")
+    .notEmpty()
+    .isLength({ min: 1, max: 3000 })
+    .withMessage("Text message must be max 3000 characters")
+    .trim()
+    .escape()
+];
+
+export const getReviewsValidator = [
+  param("gigId")
+    .notEmpty()
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid Gig ID")
+    .trim()
+    .escape()
+];
 
 export const createReviewValidator = [
-  body("gigId").notEmpty().withMessage("Gig ID is required").trim().escape(),
+  body("gigId")
+    .notEmpty()
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid Gig ID")
+    .trim()
+    .escape(),
   body("description").notEmpty().withMessage("Description is required").trim().escape(),
-  body("rating").isNumeric().withMessage("Star number must be a number")
+  body("rating")
+    .isInt({
+      min: 1,
+      max: 5
+    })
+    .withMessage("Star number must be a number")
 ];
 
 export const deleteReviewValidator = [
-  param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape(),
+  param("gigId")
+    .notEmpty()
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid Gig ID")
+    .trim()
+    .escape(),
   query("decrementRatings")
     .isInt({
       min: 1,
@@ -98,5 +141,10 @@ export const confirmOrderValidator = [
 ];
 
 export const createPaymentIntentValidator = [
-  body("gigId").notEmpty().withMessage("Gig ID is required").trim().escape()
+  body("gigId")
+    .notEmpty()
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Invalid Gig ID")
+    .trim()
+    .escape()
 ];
