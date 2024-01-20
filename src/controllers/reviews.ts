@@ -6,7 +6,7 @@ import Order from "../models/order";
 
 import { httpsCodes } from "../constants/http";
 
-const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
+const { OK, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
 /**
  * @route /api/reviews/:gigId
