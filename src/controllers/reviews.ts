@@ -100,7 +100,8 @@ export const createReview = async (req: Request, res: Response, next: NextFuncti
 export const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: userId } = req.user;
-    const { gigId, decrementRatings } = req.params;
+    const { gigId } = req.params;
+    const { decrementRatings } = req.query;
 
     const review = await Review.findOne({
       gigId,
@@ -120,7 +121,7 @@ export const deleteReview = async (req: Request, res: Response, next: NextFuncti
     await Gig.findOneAndUpdate(
       { _id: gigId },
       {
-        $inc: { ratingsSum: -parseInt(decrementRatings), numberOfRatings: -1 }
+        $inc: { ratingsSum: -parseInt(String(decrementRatings)), numberOfRatings: -1 }
       },
       {
         new: true
