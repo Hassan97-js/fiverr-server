@@ -4,8 +4,9 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node .",
     "dev": "nodemon",
+    "start:dev": "ts-node .",
+    "start": "node src/index.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": ""
