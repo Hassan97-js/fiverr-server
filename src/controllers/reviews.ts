@@ -12,17 +12,13 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
  * @route /api/reviews/:gigId
  * @access public
  */
-export const getReviews = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getReviews = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { gigId } = req.params;
 
     const reviews = await Review.find({ gigId })
       .populate("userId", ["username", "email", "image", "country", "isSeller"])
-      .select(["userId", "gigId", "starNumber", "description"]);
+      .select(["userId", "gigId", "rating", "description"]);
 
     return res.status(OK).json({ success: true, reviews });
   } catch (error) {
@@ -40,14 +36,10 @@ export const getReviews = async (
  * @route /api/reviews/single
  * @access private
  */
-export const createReview = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const createReview = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: userId, isSeller } = req.user;
-    const { gigId, description, starNumber } = req.body;
+    const { gigId, description, rating } = req.body;
 
     if (isSeller) {
       res.status(FORBIDDEN);
@@ -76,28 +68,18 @@ export const createReview = async (
       userId,
       gigId,
       description,
-      starNumber
+      rating
     });
 
-    if (!newReview) {
-      res.status(UNAUTHORIZED);
-      throw Error("Error creating a review");
-    }
-
-    const gig = await Gig.findOneAndUpdate(
+    await Gig.findOneAndUpdate(
       { _id: gigId },
       {
-        $inc: { totalStars: 1, starNumber }
+        $inc: { ratingsSum: rating, numberOfRatings: 1 }
       },
       {
         new: true
       }
     );
-
-    if (!gig) {
-      res.status(UNAUTHORIZED);
-      throw Error("Error updating gig totalStars and starNumber");
-    }
 
     return res.status(CREATED).json({ success: true, review: newReview });
   } catch (error) {
@@ -115,14 +97,10 @@ export const createReview = async (
  * @route /api/reviews/single/:gigId
  * @access private
  */
-export const deleteReview = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: loggedInUserId } = req.user;
-    const { gigId } = req.params;
+    const { gigId, decrementRatings } = req.params;
 
     const review = await Review.findOne({
       gigId,
@@ -139,15 +117,20 @@ export const deleteReview = async (
       throw Error("Unauthorized");
     }
 
-    const deletedReview = await Review.findOneAndDelete({
+    await Review.findOneAndDelete({
       gigId,
       userId: loggedInUserId
     });
 
-    if (!deletedReview) {
-      res.status(UNAUTHORIZED);
-      throw Error("Error deleting a review");
-    }
+    await Gig.findOneAndUpdate(
+      { _id: gigId },
+      {
+        $inc: { ratingsSum: -parseInt(decrementRatings), numberOfRatings: -1 }
+      },
+      {
+        new: true
+      }
+    );
 
     res.status(OK).json({ success: true });
   } catch (error) {

@@ -7,6 +7,14 @@ const gigSchema = new Schema(
       ref: "User",
       required: true
     },
+    ratingsSum: {
+      type: Number,
+      default: 0
+    },
+    numberOfRatings: {
+      type: Number,
+      default: 0
+    },
     title: {
       type: String,
       required: true
@@ -14,16 +22,6 @@ const gigSchema = new Schema(
     description: {
       type: String,
       required: true
-    },
-    totalStars: {
-      type: Number,
-      default: 0
-    },
-    starNumber: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 5
     },
     category: {
       type: String,

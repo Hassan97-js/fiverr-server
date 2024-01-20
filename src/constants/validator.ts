@@ -80,10 +80,13 @@ export const getReviewsValidator = [param("gigId").notEmpty().withMessage("Gig I
 export const createReviewValidator = [
   body("gigId").notEmpty().withMessage("Gig ID is required").trim().escape(),
   body("description").notEmpty().withMessage("Description is required").trim().escape(),
-  body("starNumber").isNumeric().withMessage("Star number must be a number")
+  body("rating").isNumeric().withMessage("Star number must be a number")
 ];
 
-export const deleteReviewValidator = [param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape()];
+export const deleteReviewValidator = [
+  param("gigId").notEmpty().withMessage("Gig ID is required").trim().escape(),
+  param("decrementRatings").isNumeric().withMessage("decrementRatings is required").trim().escape()
+];
 
 export const confirmOrderValidator = [
   body("paymentIntent").notEmpty().withMessage("Payment intent is required").trim().escape()
