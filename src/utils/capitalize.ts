@@ -1,8 +1,5 @@
-/**
- * @param {string} text - The text to be capitalized
- */
-export const capitalize = (text) => {
-  if (typeof text !== "string" && text.length === 0) {
+export const capitalize = (text: string) => {
+  if (typeof text !== "string" || text.length === 0) {
     return "";
   }
 
