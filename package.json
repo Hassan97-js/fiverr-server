@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.4.3",
     "stripe": "^13.6.0",
+    "ts-node": "^10.9.2",
     "winston": "^3.11.0"
   },
   "devDependencies": {
@@ -32,7 +33,6 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.10.5",
     "nodemon": "^3.0.2",
-    "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3"
   },
