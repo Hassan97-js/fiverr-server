@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, type Request, type Response } from "express";
 import helmet from "helmet";
 import { format, transports } from "winston";
 import cors from "cors";
@@ -39,6 +39,10 @@ app.use(
 
 app.use(mongosanitize());
 app.use(express.json());
+
+app.get("/", (_req, res) => {
+  res.redirect("/api/gigs");
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
