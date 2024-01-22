@@ -3,6 +3,7 @@ import { type Request, type Response, type NextFunction } from "express";
 import User from "../models/user";
 import Chat from "../models/chat";
 
+import { getChatId } from "../utils/get-chat-id";
 import { httpsCodes } from "../constants/http";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
@@ -105,45 +106,46 @@ export const updateChat = async (req: Request, res: Response, next: NextFunction
  */
 export const createChat = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { isSeller, id: senderId } = req.user;
-    const receiverId = req.body.receiverId;
+    const { isSeller, id: userId } = req.user;
+    const { receiverId } = req.body;
 
-    if (receiverId === senderId) {
+    if (receiverId === userId) {
       res.status(FORBIDDEN);
       throw Error("Forbidden");
     }
 
-    const user = await User.findById(receiverId).lean();
+    const otherUser = await User.findById(receiverId).lean();
 
-    if (!user) {
+    if (!otherUser) {
       res.status(UNAUTHORIZED);
       throw Error("Unauthrized");
     }
 
-    if (isSeller && user.isSeller) {
+    if (isSeller && otherUser.isSeller) {
       res.status(FORBIDDEN);
       throw Error("Seller is not allowed to create a chat with another seller");
     }
 
-    if (!isSeller && !user.isSeller) {
+    if (!isSeller && !otherUser.isSeller) {
       res.status(FORBIDDEN);
       throw Error("Client is not allowed to create a chat with another client");
     }
 
-    const chatId = isSeller ? `${senderId}-${receiverId}` : `${receiverId}-${senderId}`;
+    const otherUserId = otherUser._id.toString();
+    const chatId = getChatId(isSeller, userId, otherUserId);
 
     const chat = await Chat.findOne({
       chatId
     });
 
     if (chat) {
-      return res.status(CREATED).json({ succcess: true, chat });
+      return res.status(OK).json({ succcess: true, chat });
     }
 
     const newChat = await Chat.create({
       chatId,
-      sellerId: isSeller ? senderId : receiverId,
-      buyerId: isSeller ? receiverId : senderId,
+      sellerId: isSeller ? userId : receiverId,
+      buyerId: !isSeller ? receiverId : userId,
       readBySeller: !!isSeller,
       readByBuyer: !isSeller
     });
