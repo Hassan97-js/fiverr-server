@@ -131,8 +131,7 @@ export const createChat = async (req: Request, res: Response, next: NextFunction
       throw Error("Client is not allowed to create a chat with another client");
     }
 
-    const otherUserId = otherUser._id.toString();
-    const chatId = getChatId(isSeller, userId, otherUserId);
+    const chatId = `${userId}-${otherUser._id.toString()}`;
 
     const chat = await Chat.findOne({
       chatId

@@ -1,7 +1,7 @@
-export const getChatId = (isSeller: boolean, sellerId: string, buyerId: string) => {
-  if (typeof isSeller !== "boolean" || !sellerId || !buyerId) {
+export const getChatId = (userId: string, sellerId: string, buyerId: string) => {
+  if (!userId || !sellerId || !buyerId) {
     return "";
   }
 
-  return isSeller ? `${sellerId}-${buyerId}` : `${buyerId}-${sellerId}`;
+  return userId === sellerId ? `${sellerId}-${buyerId}` : `${buyerId}-${sellerId}`;
 };
