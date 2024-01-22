@@ -16,8 +16,6 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
   try {
     const { isSeller, id: userId } = req.user;
 
-    console.log(isSeller, userId);
-
     const chats = await Chat.find({
       chatId: { $regex: userId }
     })
