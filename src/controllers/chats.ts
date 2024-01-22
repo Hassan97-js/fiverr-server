@@ -3,8 +3,8 @@ import { type Request, type Response, type NextFunction } from "express";
 import User from "../models/user";
 import Chat from "../models/chat";
 
-import { getChatId } from "../utils/get-chat-id";
 import { httpsCodes } from "../constants/http";
+import { logger } from "../constants/logger";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
@@ -130,6 +130,8 @@ export const createChat = async (req: Request, res: Response, next: NextFunction
       res.status(FORBIDDEN);
       throw Error("Client is not allowed to create a chat with another client");
     }
+
+    logger.info(`${userId}, ${otherUser._id.toString()}`);
 
     const chatId = `${userId}-${otherUser._id.toString()}`;
 
