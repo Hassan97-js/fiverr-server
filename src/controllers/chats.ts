@@ -3,8 +3,8 @@ import { type Request, type Response, type NextFunction } from "express";
 import User from "../models/user";
 import Chat from "../models/chat";
 
+import { getChatId } from "../utils/get-chat-id";
 import { httpsCodes } from "../constants/http";
-import { logger } from "../constants/logger";
 
 const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
 
@@ -14,7 +14,7 @@ const { OK, NOT_FOUND, FORBIDDEN, CREATED, UNAUTHORIZED } = httpsCodes;
  */
 export const getChats = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { isSeller, id: userId } = req.user;
+    const { id: userId } = req.user;
 
     const chats = await Chat.find({
       chatId: { $regex: userId }
@@ -130,7 +130,10 @@ export const createChat = async (req: Request, res: Response, next: NextFunction
       throw Error("Client is not allowed to create a chat with another client");
     }
 
-    const chatId = `${userId}-${otherUser._id.toString()}`;
+    const buyerId = isSeller ? otherUser._id.toString() : userId;
+    const sellerId = isSeller ? userId : otherUser._id.toString();
+
+    const chatId = getChatId(sellerId, buyerId);
 
     const chat = await Chat.findOne({
       chatId

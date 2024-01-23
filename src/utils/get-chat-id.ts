@@ -1,7 +1,10 @@
-export const getChatId = (userId: string, sellerId: string, buyerId: string) => {
-  if (!userId || !sellerId || !buyerId) {
+export const getChatId = (sellerId: string, buyerId: string) => {
+  if (!sellerId || !buyerId) {
     return "";
   }
 
-  return userId === sellerId ? `${sellerId}-${buyerId}` : `${buyerId}-${sellerId}`;
+  const sortedIds = [buyerId, sellerId].sort();
+  const chatId = `${sortedIds[0]}-${sortedIds[1]}`;
+
+  return chatId;
 };
