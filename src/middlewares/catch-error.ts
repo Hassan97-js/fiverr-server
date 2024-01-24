@@ -8,7 +8,7 @@ import { logger } from "../constants/logger";
 
 import type { ErrorResponse } from "../types/response";
 
-const { VALIDATION_ERROR, OK, UNAUTHORIZED, CREATED, NOT_FOUND, FORBIDDEN, SERVER_ERROR } = httpsCodes;
+const { VALIDATION_ERROR, UNAUTHORIZED, NOT_FOUND, FORBIDDEN, SERVER_ERROR } = httpsCodes;
 
 export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,7 +28,7 @@ export const notFoundHandler = (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const errorHandler = (error: Error, _req: Request, res: Response<ErrorResponse>, _next: NextFunction) => {
+export const errorHandler = (error: unknown, _req: Request, res: Response<ErrorResponse>, _next: NextFunction) => {
   let currentError: Error = new Error("Internal Server Error");
 
   if (error instanceof Error) {
@@ -63,12 +63,15 @@ export const errorHandler = (error: Error, _req: Request, res: Response<ErrorRes
     currentError.message = "Internal Server Error";
   }
 
-  const isSuccess = res.statusCode === OK || res.statusCode === CREATED;
+  const statusCode = res.statusCode < 400 ? 500 : res.statusCode;
+
+  res.status(statusCode);
 
   const errorResponse = {
     title: "Internal Server Error",
     message: currentError.message,
-    success: isSuccess ? true : false,
+    success: false,
+    statusCode,
     stackTrace: NODE_ENV === "development" ? currentError.stack : undefined
   };
 

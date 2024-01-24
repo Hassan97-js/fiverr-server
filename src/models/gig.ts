@@ -64,7 +64,8 @@ const gigSchema = new Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    bufferTimeoutMS: 90000
   }
 );
 

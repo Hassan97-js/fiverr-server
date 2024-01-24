@@ -6,13 +6,13 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      max: 25,
+      max: 25
     },
     password: {
       type: String,
       required: true,
       max: 25,
-      select: false,
+      select: false
     },
     email: {
       type: String,
@@ -21,22 +21,23 @@ const userSchema = new Schema(
       lowercase: true,
       required: true,
       unique: true,
-      trim: true,
+      trim: true
     },
     image: String,
     country: {
       type: String,
-      required: [true, "Please add your country"],
+      required: [true, "Please add your country"]
     },
     phone: String,
     description: String,
     isSeller: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   {
     timestamps: true,
+    bufferTimeoutMS: 90000
   }
 );
 
