@@ -105,7 +105,7 @@ export const updateChat = async (req: Request, res: Response, next: NextFunction
  */
 export const createChat = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { isSeller, id: userId } = req.user;
+    const { isSeller, id: userId, username } = req.user;
     const { receiverId } = req.body;
 
     if (receiverId === userId) {
@@ -145,8 +145,8 @@ export const createChat = async (req: Request, res: Response, next: NextFunction
 
     const newChat = await Chat.create({
       chatId,
-      sellerId: isSeller ? userId : receiverId,
-      buyerId: !isSeller ? receiverId : userId,
+      sellerId,
+      buyerId,
       readBySeller: !!isSeller,
       readByBuyer: !isSeller
     });
